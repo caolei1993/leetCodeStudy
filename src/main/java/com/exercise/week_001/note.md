@@ -6,7 +6,8 @@
 
 首先找到需要删除的节点；
 如果找到了，删除它。  
-**说明:** 要求算法时间复杂度为 O(h)，h 为树的高度。
+**说明:** 要求算法时间复杂度为 O(h)，h 为树的高度。  
+
 **示例:**
 ```
 root = [5,3,6,2,4,null,7]
@@ -147,3 +148,56 @@ class Solution {
 }
 ```
 
+# LeetCode_700_1_二叉搜索树中的搜索  
+## 题目
+给定二叉搜索树（BST）的根节点和一个值。 你需要在BST中找到节点值等于给定值的节点。 返回以该节点为根的子树。 如果节点不存在，则返回 NULL。  
+**例如**  
+```
+给定二叉搜索树:
+
+        4
+       / \
+      2   7
+     / \
+    1   3
+
+和值: 2
+```  
+你应该返回如下子树:
+```
+      2     
+     / \   
+    1   3
+```  
+在上述示例中，如果要找的值是 5，但因为没有节点值为 5，我们应该返回 NULL。
+
+## 理解  
+考察二叉搜索树的节点查找及递归  
+了解二叉搜索树的特性，node的值大于左子数，小于其右子数。
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode searchBST(TreeNode root, int val) {
+        if (root == null) {
+            return root;
+        }
+        if (root.val > val) {
+            return  searchBST(root.left, val);
+        }
+        if (root.val < val) {
+            return  searchBST(root.right, val);
+        }
+        return root;
+    }
+
+}
+```
