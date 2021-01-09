@@ -1,4 +1,6 @@
 # LeetCode_450_1_删除二叉搜索树中的节点
+## 链接
+https://leetcode-cn.com/problems/delete-node-in-a-bst/
 ## 题目
 给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
 
@@ -149,6 +151,8 @@ class Solution {
 ```
 
 # LeetCode_700_1_二叉搜索树中的搜索  
+## 链接
+https://leetcode-cn.com/problems/search-in-a-binary-search-tree/
 ## 题目
 给定二叉搜索树（BST）的根节点和一个值。 你需要在BST中找到节点值等于给定值的节点。 返回以该节点为根的子树。 如果节点不存在，则返回 NULL。  
 **例如**  
@@ -174,6 +178,8 @@ class Solution {
 ## 理解  
 考察二叉搜索树的节点查找及递归  
 了解二叉搜索树的特性，node的值大于左子数，小于其右子数。
+## 解法一
+递归
 ### 代码
 ```java
 /**
@@ -201,3 +207,130 @@ class Solution {
 
 }
 ```
+
+## 解法二
+迭代
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode searchBST(TreeNode root, int val) {
+        while (true) {
+            if (root == null || root.val == val) {
+                return root;
+            }
+            root = root.val > val ? root.left : root.right;
+        }
+    }
+
+}
+```
+
+# LeetCode_701_1_二叉搜索树中的插入操作  
+## 链接
+https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/
+## 题目  
+给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据 保证 ，新值和原始二叉搜索树中的任意节点值都不同。
+
+注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回 任意有效的结果 。
+
+**示例 1：**
+```
+
+输入：root = [4,2,7,1,3], val = 5
+输出：[4,2,7,1,3,5]
+解释：另一个满足题目要求可以通过的树是：
+
+```
+
+**示例 2：**
+```
+
+输入：root = [40,20,60,10,30,50,70], val = 25
+输出：[40,20,60,10,30,50,70,null,null,25]
+
+```
+
+**示例 3：**
+```
+
+输入：root = [4,2,7,1,3,null,null,null,null,null,null], val = 5
+输出：[4,2,7,1,3,5]
+
+```
+
+**提示**
+* 给定的树上的节点数介于 0 和 10^4 之间
+* 每个节点都有一个唯一整数值，取值范围从 0 到 10^8
+* -10^8 <= val <= 10^8
+* 新值和原始二叉搜索树中的任意节点值都不同
+
+## 理解
+考察二叉搜索树的元素插入
+
+**添加步骤：**
+* 找到父节点parent
+* 创建新的节点node
+* parent.left = node 或者 parent.right = node
+* 遇到相等的值，建议覆盖
+
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        TreeNode node = new TreeNode(val);
+        if (root == null) {
+            return node;
+        }
+        // 创建遍历的节点
+        TreeNode node1 = root;
+        // 记录添加节点的父节点
+        TreeNode indexNode = root;
+        // 记录新节点应该加在左边还是右边
+        boolean flag = false;
+        while (node1 != null) {
+            if (val < node1.val) {
+                indexNode = node1;
+                node1 = node1.left;
+                flag = true;
+            } else {
+                indexNode = node1;
+                node1 = node1.right;
+                flag = false;
+            }
+        }
+        if (flag) {
+            indexNode.left = node;
+        } else {
+            indexNode.right = node;
+        }
+
+        return root;
+    }
+}
+```
+
+  

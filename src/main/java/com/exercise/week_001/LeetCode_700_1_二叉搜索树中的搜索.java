@@ -4,6 +4,8 @@ package main.java.com.exercise.week_001;
  * @Author cl
  * @Date 2021/1/8 14:33
  * @Version 1.0
+ * https://leetcode-cn.com/problems/search-in-a-binary-search-tree/
+ * 递归
  */
 public class LeetCode_700_1_二叉搜索树中的搜索 {
     public TreeNode searchBST(TreeNode root, int val) {
