@@ -1,6 +1,5 @@
-# LeetCode_450_1_删除二叉搜索树中的节点
-## 链接
-https://leetcode-cn.com/problems/delete-node-in-a-bst/
+[toc]
+# [LeetCode_450_1_删除二叉搜索树中的节点](https://leetcode-cn.com/problems/delete-node-in-a-bst/)
 ## 题目
 给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
 
@@ -46,21 +45,21 @@ key = 3
 节点的删除（度为二的节点删除，度为一的节点删除，叶子节点的删除） 
 本题的前驱后继查找都是在特定条件下的，删除也不能删除叶子节点
 
-### 正常的二叉树前驱节点查询方法：
+* 正常的二叉树前驱节点查询方法：
 1. 如果有左子节点，就取左子节点中最大的。即node.left.right.right....
 直到该节点的右子节点为空
 2. 如果没有左子节点，有父节点，就取父节点中第一个比自己小的，即直到该节点是
 父节点的右子节点截止，如果遍历完也没找到，则没有前驱（二叉搜索树的最小节点）
 3. 如果既没有左子节点，也没有父节点，则没有前驱（只有一个根节点）
 
-### 正常的二叉树后继节点查询方法：
+* 正常的二叉树后继节点查询方法：
 1. 如果有右子节点，就取右子节点中最小的。即node.rignt.left.left....
 直到该节点的左子节点为空
 2. 如果没有右子节点，有父节点，就取父节点中第一个比自己大的，即直到该节点
 是父节点的左子节点，如果遍历完也没找到，则没有后驱（二叉搜索树的最大节点）
 3. 如果既没有右子节点，也没有父节点，则没有后驱（只有一个根节点）
 
-### 节点的删除
+* 节点的删除
 1. 度为2的节点删除，获取node的前驱节点或后继节点，
 * 前驱节点或后继节点的值赋值给node的值
 * 再删除相应的前驱或后继节点
@@ -150,9 +149,7 @@ class Solution {
 }
 ```
 
-# LeetCode_700_1_二叉搜索树中的搜索  
-## 链接
-https://leetcode-cn.com/problems/search-in-a-binary-search-tree/
+# [LeetCode_700_1_二叉搜索树中的搜索](https://leetcode-cn.com/problems/search-in-a-binary-search-tree/) 
 ## 题目
 给定二叉搜索树（BST）的根节点和一个值。 你需要在BST中找到节点值等于给定值的节点。 返回以该节点为根的子树。 如果节点不存在，则返回 NULL。  
 **例如**  
@@ -234,9 +231,7 @@ class Solution {
 }
 ```
 
-# LeetCode_701_1_二叉搜索树中的插入操作  
-## 链接
-https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/
+# [LeetCode_701_1_二叉搜索树中的插入操作](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
 ## 题目  
 给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据 保证 ，新值和原始二叉搜索树中的任意节点值都不同。
 
@@ -332,9 +327,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_98_1_验证二叉搜索树
-## 链接
-https://leetcode-cn.com/problems/validate-binary-search-tree/submissions/
+# [LeetCode_98_1_验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/submissions/)
 ## 题目
 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
 
