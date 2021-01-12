@@ -1,6 +1,4 @@
-# LeetCode_530_1_二叉搜索树的最小绝对差
-## 链接
-https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/
+# [LeetCode_530_1_二叉搜索树的最小绝对差](https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/)
 ## 题目
 给你一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。
 
@@ -139,6 +137,57 @@ public class LeetCode_530_3_二叉搜索树的最小绝对差 {
         }
         pre = root.val;
         inorder(root.right);
+    }
+}
+```
+
+# [LeetCode_108_1_将有序数组转化为二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/)
+## 题目
+将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+**示例：**
+```
+给定有序数组: [-10,-3,0,5,9],
+
+一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+
+```
+## 理解
+有序的数组类似二叉搜索树的中序遍历，反向思考，每次都取最中间的元素作为二叉搜索树当前位置的根节点。
+可以使用递归来完成二叉搜索树还原。
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+     public TreeNode sortedArrayToBST(int[] nums) {
+        return helper(nums, 0, nums.length - 1 );
+    }
+
+    public TreeNode helper(int[] nums, int left, int right) {
+        if (left > right) {
+            return null;
+        }
+        int mid = (left + right) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = helper(nums, left, mid - 1);
+        root.right = helper(nums, mid + 1 , right);
+        return root;
     }
 }
 ```
