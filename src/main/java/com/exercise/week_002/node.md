@@ -390,3 +390,91 @@ public class LeetCode_235_3_二叉搜索树的最近公共祖先 {
     }
 }
 ```
+# [LeetCode_230_1_二叉搜索树中第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/)
+## 题目
+给定一个二叉搜索树，编写一个函数 kthSmallest 来查找其中第 k 个最小的元素。
+**说明：**
+你可以假设 k 总是有效的，1 ≤ k ≤ 二叉搜索树元素个数。
+**示例1：**
+```
+输入: root = [3,1,4,null,2], k = 1
+   3
+  / \
+ 1   4
+  \
+   2
+输出: 1
+```
+**示例2：**
+```
+输入: root = [5,3,6,2,4,null,null,1], k = 3
+       5
+      / \
+     3   6
+    / \
+   2   4
+  /
+ 1
+输出: 3
+```
+**进阶：**
+如果二叉搜索树经常被修改（插入/删除操作）并且你需要频繁地查找第 k 小的值，你将如何优化 kthSmallest 函数？
+
+## 理解
+* 解法一：中序遍历二叉搜索树从小到大排列，存入list,返回index等于k-1位置的元素及第k小的元素。
+* 解法二：优化中序遍历，找到第k小的元素就停止遍历。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_230_1_二叉搜索树中第K小的元素 {
+    private List<Integer> list = new ArrayList<>();
+    public int kthSmallest(TreeNode root, int k) {
+        inorder(root);
+        if (list.isEmpty()) {
+            return 0;
+        }
+        return list.get(k-1);
+    }
+
+    public void inorder(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        inorder(root.left);
+        list.add(root.val);
+        inorder(root.right);
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_230_2_二叉搜索树中第K小的元素 {
+    private int index = 1;
+    private int ans = 0;
+    private boolean flag = false;
+    public int kthSmallest(TreeNode root, int k) {
+        inorder(root, k);
+        return ans;
+    }
+
+    public void inorder(TreeNode root, int k) {
+        if (root == null || flag) {
+            return;
+        }
+        inorder(root.left, k);
+        if (flag) {
+            return;
+        }
+        if (k == index) {
+            ans = root.val;
+            flag = true;
+        } else {
+            index += 1;
+        }
+        inorder(root.right, k);
+    }
+}
+```
