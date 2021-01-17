@@ -478,3 +478,61 @@ public class LeetCode_230_2_二叉搜索树中第K小的元素 {
     }
 }
 ```
+
+# [LeetCode_173_1_二叉搜索树迭代器](https://leetcode-cn.com/problems/binary-search-tree-iterator/)
+## 题目
+实现一个二叉搜索树迭代器。你将使用二叉搜索树的根节点初始化迭代器。
+
+调用 next() 将返回二叉搜索树中的下一个最小的数。
+示例：
+
+```
+BSTIterator iterator = new BSTIterator(root);
+iterator.next();    // 返回 3
+iterator.next();    // 返回 7
+iterator.hasNext(); // 返回 true
+iterator.next();    // 返回 9
+iterator.hasNext(); // 返回 true
+iterator.next();    // 返回 15
+iterator.hasNext(); // 返回 true
+iterator.next();    // 返回 20
+iterator.hasNext(); // 返回 false
+```
+
+**提示：**
+
+* next() 和 hasNext() 操作的时间复杂度是 O(1)，并使用 O(h) 内存，其中 h 是树的高度。
+* 你可以假设 next() 调用总是有效的，也就是说，当调用 next() 时，BST 中至少存在一个下一个最小的数。
+
+## 理解
+利用中序遍历，将二叉搜索树中的元素转化为线性接口，在利用线性结构获取元素的方式迭代所有元素。
+
+### 代码
+```java
+public class LeetCode_173_1_二叉搜索树迭代器 {
+    int index = 0;
+    List<TreeNode> list = new ArrayList<>();
+    public LeetCode_173_1_二叉搜索树迭代器(TreeNode root) {
+        inorder(root);
+    }
+
+    public int next() {
+        int ans = list.get(index).val;
+        index++;
+        return ans;
+    }
+
+    public boolean hasNext() {
+        return index < list.size();
+    }
+
+    public void inorder(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        inorder(root.left);
+        list.add(root);
+        inorder(root.right);
+    }
+}
+```
