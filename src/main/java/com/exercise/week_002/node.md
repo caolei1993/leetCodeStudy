@@ -1,3 +1,4 @@
+[toc]
 # [LeetCode_530_1_二叉搜索树的最小绝对差](https://leetcode-cn.com/problems/minimum-absolute-difference-in-bst/)
 ## 题目
 给你一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。
@@ -533,6 +534,82 @@ public class LeetCode_173_1_二叉搜索树迭代器 {
         inorder(root.left);
         list.add(root);
         inorder(root.right);
+    }
+}
+```
+# [LeetCode_99_恢复二叉搜索树](https://leetcode-cn.com/problems/recover-binary-search-tree/)
+## 题目
+给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。请在不改变其结构的情况下，恢复这棵树。
+
+**进阶：** 使用 O(n) 空间复杂度的解法很容易实现。你能想出一个只使用常数空间的解决方案吗？
+**示例 1：**
+
+输入：root = [1,3,null,null,2]
+输出：[3,1,null,null,2]
+解释：3 不能是 1 左孩子，因为 3 > 1 。交换 1 和 3 使二叉搜索树有效。
+
+**示例 2：**
+
+输入：root = [3,1,4,null,null,2]
+输出：[2,1,4,null,null,3]
+解释：2 不能在 3 的右子树中，因为 2 < 3 。交换 2 和 3 使二叉搜索树有效。
+
+**提示：**
+
+* 树上节点的数目在范围 [2, 1000] 内
+* -231 <= Node.val <= 231 - 1
+
+## 理解
+中序遍历二叉搜索树，二叉搜索树的特性是中序遍历从小到大排列，利用这一特性找到一处或两处A(i) > A(i+1)，
+如果是相邻的两个节点交换了，只存在一处（1,3,2,4,5,6,7），非相邻的两个节点交换可找到两处（1,6,3,4,5,2,7），
+找到需要交换的两个节点的值，再遍历二叉树，将两个节点的值交换。
+
+### 代码
+```java
+public class LeetCode_99_恢复二叉搜索树 {
+    public void recoverTree(TreeNode root) {
+        List<Integer> list = inorder(root, new ArrayList<>());
+        int[] arr = findTwoSwapped(list);
+        recover(root, 2 , arr[0], arr[1]);
+    }
+
+    public int[] findTwoSwapped(List<Integer> list) {
+        int size = list.size();
+        int x = -1;
+        int y = -1;
+        for (int i = 1; i < size; i++) {
+            if (list.get(i - 1) > list.get(i)) {
+                y = list.get(i);
+                if (x == -1) {
+                    x = list.get(i - 1);
+                } else {
+                    break;
+                }
+            }
+        }
+        return new int[]{x, y};
+    }
+
+    public void recover(TreeNode root, int count, int x, int y) {
+        if (root == null || count == 0) {
+            return;
+        }
+        if (root.val == x || root.val == y) {
+            root.val = root.val == x ? y : x;
+            count--;
+        }
+        recover(root.left, count, x, y);
+        recover(root.right, count, x , y);
+    }
+
+    public List<Integer> inorder(TreeNode root, List<Integer> list) {
+        if (root == null) {
+            return list;
+        }
+        inorder(root.left, list);
+        list.add(root.val);
+        inorder(root.right, list);
+        return list;
     }
 }
 ```
