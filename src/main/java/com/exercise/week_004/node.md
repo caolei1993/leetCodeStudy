@@ -304,4 +304,74 @@ public class LeetCode_589_2_N叉树的前序遍历 {
 }
 ```
 
- 
+# [LeetCode_590_1_N叉树的后序遍历](https://leetcode-cn.com/problems/n-ary-tree-postorder-traversal/)
+## 题目
+给定一个 N 叉树，返回其节点值的后序遍历。
+
+例如，给定一个 3叉树 :
+
+ 
+
+
+
+ 
+
+返回其后序遍历: [5,6,3,2,4,1].
+
+说明: 递归法很简单，你可以使用迭代法完成此题吗?
+
+## 理解
+* 解法一：使用递归法，完成N叉树的后序遍历
+* 解法二：使用迭代法，完成N叉树的后序遍历，借助两个栈结构，使用将中右左结构翻转为左右中的思想。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_590_1_N叉树的后序遍历 {
+    List<Integer> list = new ArrayList<>();
+    public List<Integer> postorder(Node root) {
+        nodePostorder(root);
+        return list;
+    }
+
+    public void nodePostorder(Node node) {
+        if (node == null) {
+            return;
+        }
+        for (Node child : node.children) {
+            nodePostorder(child);
+        }
+        list.add(node.val);
+    }
+
+}
+
+```
+## 解法二
+### 代码
+```java
+public class LeetCode_590_2_N叉树的后序遍历 {
+    List<Integer> list = new ArrayList<>();
+    public List<Integer> postorder(Node root) {
+        Stack<Node> stack = new Stack<>();
+        Stack<Node> stack1 = new Stack<>();
+        if (root == null) {
+            return list;
+        }
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            stack1.push(node);
+            for (Node child : node.children) {
+                stack.push(child);
+            }
+        }
+        while (!stack1.isEmpty()) {
+            Node node = stack1.pop();
+            list.add(node.val);
+        }
+        return list;
+    }
+}
+
+```
