@@ -570,3 +570,91 @@ public class LeetCode_114_3_二叉树展开为链表 {
     }
 }
 ```
+# [LeetCode_106_1_从中序与后序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+## 题目
+根据一棵树的中序遍历与后序遍历构造二叉树。
+
+注意:  
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+中序遍历 inorder = [9,3,15,20,7]  
+后序遍历 postorder = [9,15,7,20,3]  
+返回如下的二叉树：
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+## 理解
+* 解法一：使用递归的方法，求出左子树对应的中序与后序遍历序列，同理找出右子树对应的参数，使用递归。
+* 解法二：使用迭代法，类似于第五周从前序遍历与中序遍历序列构造二叉树的迭代法，反向看后序遍历为中右左
+顺序，反向看中序遍历为右中左顺序，及为变相成为根据（前序遍历）与（中序遍历）构造二叉树了。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_106_1_从中序与后序遍历序列构造二叉树 {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        int size = inorder.length;
+        if (size == 0) {
+            return null;
+        }
+        TreeNode root = new TreeNode(postorder[size-1]);
+
+        List<Integer> inorderList = Arrays.stream(inorder).boxed().collect(Collectors.toList());;
+        int rootIndex = inorderList.indexOf(root.val);
+        int[] inorderLeft = new int[rootIndex];
+        int[] postorderLeft = new int[rootIndex];
+        for (int i=0; i<rootIndex; i++) {
+            inorderLeft[i] = inorder[i];
+            postorderLeft[i] = postorder[i];
+        }
+        int[] inorderRight = new int[size-rootIndex-1];
+        int[] postorderRight = new int[size-rootIndex-1];
+        for (int i=0; i<size-rootIndex-1; i++) {
+            inorderRight[i] = inorder[rootIndex+i+1];
+            postorderRight[i] = postorder[rootIndex+i];
+        }
+        root.left = buildTree(inorderLeft, postorderLeft);
+        root.right = buildTree(inorderRight, postorderRight);
+        return root;
+    }
+}
+```
+## 解法二
+### 代码
+```java
+public class LeetCode_106_2_从中序与后序遍历序列构造二叉树 {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (inorder == null || inorder.length == 0) {
+            return null;
+        }
+        int size = postorder.length;
+        TreeNode root = new TreeNode(postorder[size-1]);
+        int inorderIndex = size-1;
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        // 反向遍历后序遍历的节点，即中右左的顺序遍历
+        for (int i=size-2; i >= 0; i-- ) {
+            TreeNode postNode = new TreeNode(postorder[i]);
+            TreeNode node = stack.peek();
+            if (node.val != inorder[inorderIndex]) {
+                node.right = postNode;
+                stack.push(postNode);
+            } else {
+                while (!stack.isEmpty() && stack.peek().val == inorder[inorderIndex]) {
+                    node = stack.pop();
+                    inorderIndex--;
+                }
+                node.left = postNode;
+                stack.push(postNode);
+            }
+        }
+        return root;
+    }
+}
+```
