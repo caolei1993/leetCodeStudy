@@ -312,3 +312,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_206_1_反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
+## 题目
+反转一个单链表。
+
+示例:
+
+输入: 1->2->3->4->5->NULL  
+输出: 5->4->3->2->1->NULL
+  
+进阶:  
+你可以迭代或递归地反转链表。你能否用两种方法解决这道题？
+
+## 理解
+* 解法一：使用递归法，递归方法参数为ListNode,截止条件为ListNode==null || ListNode.next==null(只有一个节点，不需要反转)，
+处理逻辑（先想象使用递归已经将head.next都已处理好，最后只需将head.next(反转的最后一个节点)的next置为head, head.next=null。
+* 解法二：使用迭代法，利用当前节点与前一个节点两个变量来辅助迭代，当前节点初始化为头节点，前一个为null,
+迭代条件为当前节点不为空，临时记录当前节点next为临时节点，当前节点next置为pre,pre置为curr,curr置为临时节点。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_206_1_反转链表 {
+    public ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead = reverseList(head.next);
+        ListNode lastNode = head.next;
+        lastNode.next = head;
+        head.next = null;
+        return newHead;
+    }
+}
+```
+## 解法二
+### 代码
+```java
+public class LeetCode_206_2_反转链表 {
+    public ListNode reverseList(ListNode head) {
+        ListNode curr = head;
+        ListNode pre = null;
+        while (curr != null) {
+            // 临时存入当前节点的下一个
+            ListNode tep = curr.next;
+            // 当前节点的next指向前一个
+            curr.next = pre;
+            // 更新前一个节点
+            pre = curr;
+            // 更新当前节点
+            curr = tep;
+        }
+        return pre;
+    }
+}
+```
