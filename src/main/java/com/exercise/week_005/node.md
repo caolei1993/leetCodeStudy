@@ -86,3 +86,98 @@ public class LeetCode_2_105_从前序与中序遍历序列构造二叉树 {
 }
 
 ```
+# [LeetCode_889_1_根据前序和后续遍历构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/)
+## 题目
+返回与给定的前序和后序遍历匹配的任何二叉树。  
+
+ pre 和 post 遍历中的值是不同的正整数。
+
+ 
+
+示例：
+
+输入：pre = [1,2,4,5,3,6,7], post = [4,5,2,6,7,3,1]  
+输出：[1,2,3,4,5,6,7]
+ 
+
+提示：
+
+1 <= pre.length == post.length <= 30  
+pre[] 和 post[] 都是 1, 2, ..., pre.length 的排列  
+每个输入保证至少有一个答案。如果有多个答案，可以返回其中一个。
+
+## 理解
+* 解法一：利用递归法，递归函数参数设定为完整前序遍历序列，完整后序遍历序列，前序遍历起始坐标，前序遍历终止坐标，
+后序遍历起始坐标，后序遍历终止坐标。其实就是变相的把要构成的节点的前序遍历序列和后续遍历序列做为递归
+函数的参数，需要注意（子树长度 = 终止坐标 - 起始坐标 +1），同理（终止节点的坐标 = 起始坐标 + 子树长度 -1），
+并且约定前序遍历根节点后的第一个元素必须为左子树。
+* 解法二：也是利用递归法，只是递归函数的参数简化，简化为，前序遍历起始坐标，后续遍历的起始坐标，子树长度。
+有以上三个参数很容易计算出终止坐标（终止坐标 = 起始坐标 + 子树长度 -1），也约定前序遍历根节点后的第一个元素必须为左子树。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_889_1_根据前序和后续遍历构造二叉树 {
+    Map<Integer, Integer> map = new HashMap<>();
+    public TreeNode constructFromPrePost(int[] pre, int[] post) {
+        for (int i=0; i<post.length; i++) {
+            map.put(post[i], i);
+        }
+
+        return buildTree(pre, post, 0, pre.length-1, 0, post.length-1);
+    }
+
+    public TreeNode buildTree(int[] pre, int[] post, int preLeft, int preRight, int postLeft, int postRight) {
+        if (preLeft > preRight) {
+            return null;
+        }
+        TreeNode root = new TreeNode(pre[preLeft]);
+        if (preLeft == preRight) {
+            return root;
+        }
+        int leftLength = map.get(pre[preLeft+1]) - postLeft + 1;
+        root.left = buildTree(pre, post, preLeft+1, preLeft+leftLength,  postLeft, postLeft+leftLength-1);
+        root.right = buildTree(pre, post, preLeft+leftLength+1, preRight, postLeft+leftLength, postRight-1);
+        return root;
+    }
+}
+```
+## 解法二
+### 代码
+```java
+public class LeetCode_889_2_根据前序和后序遍历构造二叉树 {
+    Map<Integer, Integer> map = new HashMap<>();
+    public TreeNode constructFromPrePost(int[] pre, int[] post) {
+        for (int i=0; i<post.length; i++) {
+            map.put(post[i], i);
+        }
+
+        return buildTree(pre, post, 0, 0, post.length);
+    }
+
+    /**
+     *
+     * @param pre
+     * @param post
+     * @param preIndex 前序遍历首节点的坐标
+     * @param postIndex 后序遍历首节点的坐标
+     * @param size 长度
+     * @return
+     */
+    public TreeNode buildTree(int[] pre, int[] post, int preIndex, int postIndex, int size) {
+        if (size == 0) {
+            return null;
+        }
+        TreeNode root = new TreeNode(pre[preIndex]);
+        if (size == 1) {
+            return root;
+        }
+        // 前序遍历根节点后默认认为是左节点
+        int leftLength = map.get(pre[preIndex+1]) - postIndex + 1;
+        root.left = buildTree(pre, post, preIndex+1, postIndex,  leftLength);
+        root.right = buildTree(pre, post, preIndex+leftLength+1, postIndex+leftLength, size-leftLength-1);
+        return root;
+    }
+}
+
+```
