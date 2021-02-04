@@ -181,3 +181,96 @@ public class LeetCode_889_2_根据前序和后序遍历构造二叉树 {
 }
 
 ```
+# [LeetCode_101_1_对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
+## 题目
+给定一个二叉树，检查它是否是镜像对称的。
+ 
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+```
+    1
+   / \
+  2   2
+   \   \
+   3    3
+```
+
+进阶：
+
+你可以运用递归和迭代两种方法解决这个问题吗？
+
+## 理解
+* 解法一：使用迭代法，利用队列，先重复将根节点入队两次，如果队列不为空，进入循环，连续出队两个节点，需要
+确认这两个节点如果值一样或全为null，即符合对称，否则不对称，子节点需要对称入队判断，第一个节点的左子节点和第二个
+节点的右子节点一起入队，第一个节点的右子节点和第二个节点的左子节点一起入队。
+
+* 解法二：使用递归法，递归函数两个参数（节点1，节点2），具体判断与迭代判断类似，递归调用参数也需要对称传输。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_101_1_对称二叉树 {
+    public boolean isSymmetric(TreeNode root) {
+        return check(root, root);
+    }
+
+    private boolean check(TreeNode root, TreeNode root1) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        queue.offer(root1);
+        while (!queue.isEmpty()) {
+            TreeNode a = queue.poll();
+            TreeNode b = queue.poll();
+            if (a == null && b == null ) {
+                continue;
+            }
+            if (a == null || b == null || a.val != b.val) {
+                return false;
+            }
+
+            queue.offer(a.left);
+            queue.offer(b.right);
+
+            queue.offer(a.right);
+            queue.offer(b.left);
+        }
+        return true;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_101_2_对称二叉树 {
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        } else {
+            return check(root.left, root.right);
+        }
+    }
+
+    private boolean check(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null) {
+            return false;
+        }
+        return left.val == right.val && check(left.right, right.left) && check(left.left, right.right);
+    }
+}
+
+```
