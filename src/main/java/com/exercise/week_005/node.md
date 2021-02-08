@@ -456,3 +456,119 @@ public class LeetCode_141_2_环形链表 {
     }
 }
 ```
+# [LeetCode_83_1_删除排序链表中的重复元素](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list/)
+## 题目
+给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
+
+示例 1:
+
+输入: 1->1->2  
+输出: 1->2  
+示例 2:  
+
+输入: 1->1->2->3->3  
+输出: 1->2->3  
+
+## 理解
+需要注意是一个排序链表，则重复元素只可能出现在相邻位置。
+
+### 代码
+```java
+public class LeetCode_83_1_删除排序链表中的重复元素 {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode node = head;
+        while (node != null && node.next != null) {
+            if (node.next.val == node.val) {
+                node.next = node.next.next;
+            } else {
+                node = node.next;
+            }
+        }
+        return head;
+    }
+}
+```
+# [LeetCode_876_1_链表的中间结点](https://leetcode-cn.com/problems/middle-of-the-linked-list/)
+## 题目
+给定一个头结点为 head 的非空单链表，返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+ 
+
+示例 1：
+```
+输入：[1,2,3,4,5]
+输出：此列表中的结点 3 (序列化形式：[3,4,5])
+返回的结点值为 3 。 (测评系统对该结点序列化表述是 [3,4,5])。
+注意，我们返回了一个 ListNode 类型的对象 ans，这样：
+ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next = NULL.
+```
+
+示例 2：
+```
+输入：[1,2,3,4,5,6]
+输出：此列表中的结点 4 (序列化形式：[4,5,6])
+由于该列表有两个中间结点，值分别为 3 和 4，我们返回第二个结点。
+```
+
+提示：
+
+给定链表的结点数介于 1 和 100 之间。
+
+## 理解
+通过遍历链表求取链表长度，长度/2并向下取整，求得处理头节点次数，最后处理头节点。
+
+### 代码
+```java
+public class LeetCode_876_1_链表的中间结点 {
+
+    public ListNode middleNode(ListNode head) {
+        int size = 0;
+        ListNode node = head;
+        while(node != null) {
+            node = node.next;
+            size++;
+        }
+        int mid = (int)Math.floor(size / 2.0);
+        while (mid != 0) {
+            head = head.next;
+            mid--;
+        }
+        return head;
+    }
+}
+```
+
+# [LeetCode_203_1_移除链表元素](https://leetcode-cn.com/problems/remove-linked-list-elements/)
+## 题目
+删除链表中等于给定值 val 的所有节点。
+
+示例:
+```
+输入: 1->2->6->3->4->5->6, val = 6  
+输出: 1->2->3->4->5
+```
+
+## 理解
+通过虚拟头结点的方式统一处理逻辑，遍历链表，去除指定值。
+
+### 代码
+```java
+public class LeetCode_203_1_移除链表元素 {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode node = new ListNode(0, head);
+        ListNode curr = head;
+        ListNode pre = node;
+        while(curr != null) {
+            if (curr.val == val) {
+               pre.next = curr.next;
+            } else {
+                pre = curr;
+            }
+            curr = curr.next;
+        }
+        return node.next;
+    }
+}
+```
