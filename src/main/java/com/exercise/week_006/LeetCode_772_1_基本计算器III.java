@@ -8,7 +8,7 @@ import java.util.Stack;
  * @Version 1.0
  * https://leetcode-cn.com/problems/basic-calculator-iii/
  */
-public class LeetCode_772_基本计算器III {
+public class LeetCode_772_1_基本计算器III {
 
     public int calculate(String s) {
         s = s.trim();
@@ -84,7 +84,7 @@ public class LeetCode_772_基本计算器III {
     }
 
     public static void main(String[] args) {
-        LeetCode_772_基本计算器III a = new LeetCode_772_基本计算器III();
+        LeetCode_772_1_基本计算器III a = new LeetCode_772_1_基本计算器III();
         System.out.println("ans = " + a.calculate("(2+6* 3+5- (3*14/7+2)*5)+3"));
     }
 }

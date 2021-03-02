@@ -8,7 +8,7 @@ import java.util.Stack;
  * @Version 1.0
  * https://leetcode-cn.com/problems/basic-calculator-ii/
  */
-public class LeetCode_227_基本计算器II {
+public class LeetCode_227_1_基本计算器II {
     public int calculate(String s) {
         // 添加等号，方便处理字符串最后一个数字
         s = s + '=';
@@ -56,7 +56,7 @@ public class LeetCode_227_基本计算器II {
     }
 
     public static void main(String[] args) {
-        LeetCode_227_基本计算器II a = new LeetCode_227_基本计算器II();
+        LeetCode_227_1_基本计算器II a = new LeetCode_227_1_基本计算器II();
         System.out.println(a.calculate(" 3+2* 2/2"));
     }
 }

@@ -451,7 +451,7 @@ public class LeetCode_224_2_基本计算器 {
 
 }
 ```
-# [LeetCode_227_基本计算器II](https://leetcode-cn.com/problems/basic-calculator-ii/)
+# [LeetCode_227_1_基本计算器II](https://leetcode-cn.com/problems/basic-calculator-ii/)
 ## 题目
 实现一个基本的计算器来计算一个简单的字符串表达式的值。
 
@@ -486,7 +486,7 @@ public class LeetCode_224_2_基本计算器 {
 
 ### 代码
 ```java
-public class LeetCode_227_基本计算器II {
+public class LeetCode_227_1_基本计算器II {
     public int calculate(String s) {
         // 添加等号，方便处理字符串最后一个数字
         s = s + '=';
@@ -535,7 +535,7 @@ public class LeetCode_227_基本计算器II {
 }
 ```
 
-# [LeetCode_772_基本计算器III](https://leetcode-cn.com/problems/basic-calculator-iii/)
+# [LeetCode_772_1_基本计算器III](https://leetcode-cn.com/problems/basic-calculator-iii/)
 ## 题目
 实现一个基本的计算器来计算简单的表达式字符串。  
 表达式字符串可以包含左括号 (和右括号)，加号 + 和减号 -，非负 整数和空格 。  
@@ -560,7 +560,7 @@ public class LeetCode_227_基本计算器II {
 
 ### 代码
 ```java
-public class LeetCode_772_基本计算器III {
+public class LeetCode_772_1_基本计算器III {
 
     public int calculate(String s) {
         s = s.trim();
