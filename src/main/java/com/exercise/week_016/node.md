@@ -177,3 +177,97 @@ public class LeetCode_1734_2_解码异或后的排序 {
     }
 }
 ```
+# [LeetCode_1310_1_子数组异或查询](https://leetcode-cn.com/problems/xor-queries-of-a-subarray/)
+## 题目
+有一个正整数数组 arr，现给你一个对应的查询数组 queries，其中 queries[i] = [Li, Ri]。
+
+对于每个查询 i，请你计算从 Li 到 Ri 的 XOR 值（即 arr[Li] xor arr[Li+1] xor ... xor arr[Ri]）作为本次查询的结果。
+
+并返回一个包含给定查询 queries 所有结果的数组。
+
+示例 1：
+```
+输入：arr = [1,3,4,8], queries = [[0,1],[1,2],[0,3],[3,3]]
+输出：[2,7,14,8]
+解释：
+数组中元素的二进制表示形式是：
+1 = 0001
+3 = 0011
+4 = 0100
+8 = 1000
+查询的 XOR 值为：
+[0,1] = 1 xor 3 = 2
+[1,2] = 3 xor 4 = 7
+[0,3] = 1 xor 3 xor 4 xor 8 = 14
+[3,3] = 8
+```
+
+示例 2：
+```
+输入：arr = [4,8,2,10], queries = [[2,3],[1,3],[0,0],[0,3]]
+输出：[8,0,4,4]
+ 
+```
+
+提示：
+
+* 1 <= arr.length <= 3 * 10^4
+* 1 <= arr[i] <= 10^9
+* 1 <= queries.length <= 3 * 10^4
+* queries[i].length == 2
+* 0 <= queries[i][0] <= queries[i][1] < arr.length
+
+## 理解
+解法一：暴力枚举，时间复杂度在O（n * m），依次求取ans数组中的每一个元素，在通过
+获取queries[i]，来确认异或的起始和结尾位置，求取值，再赋值到ans的相应位置。
+解法二：前缀和，时间复杂度在O（n），n为queries数组的长度，我们预先求取前缀和数组，
+这里前缀和的求取，利用异或算法代替，根据异或运算的性质，我们知道两个相等的值异或的
+结果为0且异或运算遵循交换律，所以[i,j]区间的异或结果为，preArr[i - 1] ^ preArr[j]
+需特殊处理i为0的情况，或者preArr从下标1开始复制到下标n。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_1310_1_子数组异或查询 {
+    public int[] xorQueries(int[] arr, int[][] queries) {
+        int n = queries.length;
+        int[] ans = new int[n];
+        for (int i = 0; i < n ; i++) {
+            int[] subArr = queries[i];
+            int value = 0;
+            for (int j = subArr[0]; j <= subArr[1]; j++) {
+                value = value ^ arr[j];
+            }
+            ans[i] = value;
+        }
+        return ans;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_1310_2_子数组异或查询 {
+    public int[] xorQueries(int[] arr, int[][] queries) {
+        int m = arr.length;
+        // 定义前缀和数组（这里做异或操作）
+        int[] preArr = new int[m];
+        int value = 0;
+        // 初始化前缀和数组
+        for (int i = 0; i < m; i++) {
+            value = value ^ arr[i];
+            preArr[i] = value;
+        }
+
+        int n = queries.length;
+        int[] ans = new int[n];
+
+        for (int i = 0; i < n ; i++) {
+            int[] subArr = queries[i];
+            ans[i] = subArr[0] == 0 ? preArr[subArr[1]] : preArr[subArr[0] - 1] ^ preArr[subArr[1]];
+        }
+        return ans;
+    }
+}
+```
