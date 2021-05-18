@@ -271,3 +271,100 @@ public class LeetCode_1310_2_子数组异或查询 {
     }
 }
 ```
+
+# [LeetCode_421_1_数组中两个数的最大异或值](https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/)
+## 题目
+给你一个整数数组 nums ，返回 nums[i] XOR nums[j] 的最大运算结果，其中 0 ≤ i ≤ j < n 。
+
+进阶：你可以在 O(n) 的时间解决这个问题吗？
+
+ 
+
+示例 1：
+```
+输入：nums = [3,10,5,25,2,8]
+输出：28
+解释：最大运算结果是 5 XOR 25 = 28.
+```
+
+示例 2：
+```
+输入：nums = [0]
+输出：0
+```
+
+示例 3：
+```
+输入：nums = [2,4]
+输出：6
+```
+
+示例 4：
+```
+输入：nums = [8,10,2]
+输出：10
+```
+
+示例 5：
+```
+输入：nums = [14,70,53,83,49,91,36,80,92,51,66,70]
+输出：127
+```
+
+提示：
+
+* 1 <= nums.length <= 2 * 104
+* 0 <= nums[i] <= 231 - 1
+
+## 理解
+利用字典树（Tire）来辅助求取异或结果的最大值，我们用字典树，存储每一个数字的二进制值，
+只可能有两种情况也就是0和1，再通过字典树的getVal方法来获取，某一位与当前值的该位（
+二进制位）值相反的数，尽可能取差异位多的情况，保证异或的结果最大，这样当遍历完整个数组
+时，不断取最大的异或结果，就能得到我们的目标值。
+
+### 代码
+```java
+public class LeetCode_421_1_数组中两个数的最大异或值 {
+
+    static class Node {
+        Node[] nds = new Node[2];
+    }
+    Node root = new Node();
+
+    private void add (int x) {
+        Node p = root;
+        for (int i = 31; i >= 0 ; i--) {
+            int a = (x >> i) & 1;
+            if (p.nds[a] == null) {
+                p.nds[a] = new Node();
+            }
+            p = p.nds[a];
+        }
+    }
+
+    private int getVal(int x) {
+        Node p = root;
+        int ans = 0;
+        for (int i = 31; i >= 0 ; i--) {
+            int a = (x >> i) & 1, b = 1 - a;
+            if (p.nds[b] != null) {
+                ans |= b << i;
+                p = p.nds[b];
+            } else {
+                ans |= a << i;
+                p = p.nds[a];
+            }
+        }
+        return ans;
+    }
+    public int findMaximumXOR(int[] nums) {
+        int ans = 0;
+        for (int i : nums) {
+            add(i);
+            int j = getVal(i);
+            ans = Math.max(ans, i ^ j);
+        }
+        return ans;
+    }
+}
+```
