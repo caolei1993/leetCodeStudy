@@ -106,3 +106,117 @@ public class LeetCode_1787_1_使所有区间的异或结果为零 {
     }
 }
 ```
+# [LeetCode_1190_1_反转每对括号间的子串](https://leetcode-cn.com/problems/reverse-substrings-between-each-pair-of-parentheses/)
+## 题目
+给出一个字符串 s（仅含有小写英文字母和括号）。
+
+请你按照从括号内到外的顺序，逐层反转每对匹配括号中的字符串，并返回最终的结果。
+
+注意，您的结果中 不应 包含任何括号。
+
+ 
+
+示例 1：
+```
+输入：s = "(abcd)"
+输出："dcba"
+```
+
+示例 2：
+```
+输入：s = "(u(love)i)"
+输出："iloveu"
+```
+
+示例 3：
+```
+输入：s = "(ed(et(oc))el)"
+输出："leetcode"
+```
+
+示例 4：
+```
+输入：s = "a(bcdefghijkl(mno)p)q"
+输出："apmnolkjihgfedcbq"
+```
+
+提示：
+
+* 0 <= s.length <= 2000
+* s 中只有小写英文字母和括号
+* 我们确保所有括号都是成对出现的
+
+## 理解
+解法一：使用双端队列，从前往后遍历每个字符，把不是')'的所有字符
+都从队尾入队，当遍历到')'时，从队尾出队字符，直到队尾为'('，也就
+是找到一组匹配的（），将中间元素反转再从队尾入队（注意剔除括号），
+依次直到元素遍历完，最后从队首出队元素组成string返回。
+解法二：利用数组代替双端队列，提高处理效率，利用数组和双指针来
+替代双端队列。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_1190_1_反转每对括号间的子串 {
+    public String reverseParentheses(String s) {
+        ArrayDeque<Character> deque = new ArrayDeque<>();
+        StringBuilder sb = new StringBuilder();
+        List<Character>  subList;
+        for (char c : s.toCharArray()) {
+            if (c != ')') {
+                deque.offerLast(c);
+            } else {
+                subList = new ArrayList<>();
+                while (deque.peekLast() != '(') {
+                    subList.add(deque.pollLast());
+                }
+                // 去除‘（’
+                deque.pollLast();
+                // 将反转的字符串放回deque（从后往前取值放入集合，再从前往后放入队列，相当于已经做了反转）
+                for (char cc : subList) {
+                    deque.offerLast(cc);
+                }
+            }
+        }
+        while (!deque.isEmpty()) {
+            sb.append(deque.pollFirst());
+        }
+        return sb.toString();
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_1190_2_反转每对括号间的子串 {
+    char[] deque = new char[2000];
+    int head = 0, tail = -1;
+    char[] sub = new char[2000];
+    public String reverseParentheses(String s) {
+        for (char c : s.toCharArray()) {
+            if (c == ')') {
+                int ids = 0;
+                while (tail >= head) {
+                    if (deque[tail] == '(') {
+                        tail--;
+                        for (int i = 0; i < ids; i++) {
+                            deque[++tail] = sub[i];
+                        }
+                        break;
+                    } else {
+                        sub[ids++] = deque[tail--];
+                    }
+                }
+            } else {
+                deque[++tail] = c;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        while (tail >= head) {
+            sb.append(deque[head++]);
+        }
+        return sb.toString();
+    }
+}
+```
