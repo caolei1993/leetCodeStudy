@@ -142,3 +142,76 @@ public class LeetCode_1744_1_在指定天吃到想吃的糖果 {
     }
 }
 ```
+
+# [LeetCode_523_1_连续的子数组和](https://leetcode-cn.com/problems/continuous-subarray-sum/)
+## 题目
+给你一个整数数组 nums 和一个整数 k ，编写一个函数来判断该数组是否含有同时满足下述条件的连续子数组：
+
+子数组大小 至少为 2 ，且  
+子数组元素总和为 k 的倍数。  
+如果存在，返回 true ；否则，返回 false 。  
+
+如果存在一个整数 n ，令整数 x 符合 x = n * k ，则称 x 是 k 的一个倍数。
+
+示例 1：
+```
+输入：nums = [23,2,4,6,7], k = 6
+输出：true
+解释：[2,4] 是一个大小为 2 的子数组，并且和为 6 。
+```
+
+示例 2：
+```
+输入：nums = [23,2,6,4,7], k = 6
+输出：true
+解释：[23, 2, 6, 4, 7] 是大小为 5 的子数组，并且和为 42 。 
+42 是 6 的倍数，因为 42 = 7 * 6 且 7 是一个整数。
+```
+
+示例 3：
+```
+输入：nums = [23,2,6,4,7], k = 13
+输出：false
+```
+
+提示：
+
+* 1 <= nums.length <= 105
+* 0 <= nums[i] <= 109
+* 0 <= sum(nums[i]) <= 231 - 1
+* 1 <= k <= 231 - 1
+
+## 理解
+利用前缀和加HashSet来求解，前缀和是为了快速求取某个子区间的值（O(1)复杂度下求取）。  
+我们假设[i,j]区间的和是k的倍数，所以有 sum[j] - sum[i - 1] = n * k  
+等式两边同时除以k得：sum[j]/k - sum[i - 1]/k = n  
+n是个整数，所以我们只需要保证sum[j]和sum[i - 1]除以k取余的结果相同即可。
+所以我们遍历区间的右边界，在其左边找是否存在除以k取余结果与之相等的i即可（这里需要
+注意子数组的最小长度是2，所以我们前缀和数组的差值最小要等于2），注意按本题的题意n=0
+即区间的结果为0，多个连续元素为0，这种子区间也是满足的。
+
+证明： a = x1 * k + y1，b = x2 * k + y2  
+       a - b = （x1 - x2）k + y1 - y2
+       所以要想a-b是k的一个倍数，y1 - y2 = 0，y1和y2分别为数字a和b除以k取余的值  
+
+### 代码
+```java
+public class LeetCode_523_1_连续的子数组和 {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int n = nums.length;
+        // 创建并初始化前缀和数组
+        int[] sum = new int[n + 1];
+        for (int i = 1; i <= n ; i++) {
+            sum[i] = sum[i - 1] + nums[i - 1];
+        }
+        Set<Integer> set = new HashSet<>();
+        for (int i = 2; i <= n; i++) {
+            set.add(sum[i - 2] % k);
+            if (set.contains(sum[i] % k)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
