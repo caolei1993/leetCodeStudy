@@ -215,3 +215,58 @@ public class LeetCode_523_1_连续的子数组和 {
     }
 }
 ```
+
+# [LeetCode_525_1_连续数组](https://leetcode-cn.com/problems/contiguous-array/)
+## 题目
+给定一个二进制数组 nums , 找到含有相同数量的 0 和 1 的最长连续子数组，并返回该子数组的长度。
+
+示例 1:
+```
+输入: nums = [0,1]
+输出: 2
+说明: [0, 1] 是具有相同数量0和1的最长连续子数组。
+```
+
+示例 2:
+```
+输入: nums = [0,1,0]
+输出: 2
+说明: [0, 1] (或 [1, 0]) 是具有相同数量0和1的最长连续子数组。
+```
+
+提示：
+
+* 1 <= nums.length <= 105
+* nums[i] 不是 0 就是 1
+
+## 理解
+利用前缀树和哈希表求解，前缀和处理时将0看做-1，那么0和1数量相等的情况下和为0，所以我们只需要求
+最长和为0的子数组即可，再使用哈希表记录每一个前缀序列的坐标，方便求取子数组长度，除了0以外的答案
+数组长度为2的倍数，最小也为2，所以我们可以从2遍历前缀和数组，这时保证至少包含坐标为0,1的两个元素，
+当map包含与sum[i]相等的左边界时，求取子数组长度，且我们保证了同一值只在map中存了最左的边界，保证
+了求取子数组的长度最大。
+
+### 代码
+```java
+public class LeetCode_525_1_连续数组 {
+    public int findMaxLength(int[] nums) {
+        int n = nums.length;
+        // 定义前缀和数组，并初始化，把0当做-1处理
+        int[] sum = new int[n + 1];
+        for (int i = 1; i <= n ; i++) {
+            sum[i] = sum[i - 1] + (nums[i - 1] == 1 ? 1 : -1);
+        }
+        int ans = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 2; i <= n ; i++) {
+            if (!map.containsKey(sum[i - 2])) {
+                map.put(sum[i - 2], i - 2);
+            }
+            if (map.containsKey(sum[i])) {
+                ans = Math.max(ans, i - map.get(sum[i]));
+            }
+        }
+        return ans;
+    }
+}
+```
