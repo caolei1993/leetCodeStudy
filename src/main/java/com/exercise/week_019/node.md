@@ -270,3 +270,195 @@ public class LeetCode_525_1_连续数组 {
     }
 }
 ```
+# [LeetCode_160_1_相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)
+## 题目
+给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
+
+图示两个链表在节点 c1 开始相交：
+
+题目数据 保证 整个链式结构中不存在环。
+
+注意，函数返回结果后，链表必须 保持其原始结构 。
+
+
+示例 1：
+```
+输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3
+输出：Intersected at '8'
+解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。
+从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。
+在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。
+```
+
+示例 2：
+```
+输入：intersectVal = 2, listA = [0,9,1,2,4], listB = [3,2,4], skipA = 3, skipB = 1
+输出：Intersected at '2'
+解释：相交节点的值为 2 （注意，如果两个链表相交则不能为 0）。
+从各自的表头开始算起，链表 A 为 [0,9,1,2,4]，链表 B 为 [3,2,4]。
+在 A 中，相交节点前有 3 个节点；在 B 中，相交节点前有 1 个节点。
+```
+
+示例 3：
+```
+输入：intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
+输出：null
+解释：从各自的表头开始算起，链表 A 为 [2,6,4]，链表 B 为 [1,5]。
+由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。
+这两个链表不相交，因此返回 null 。
+```
+
+提示：
+
+* listA 中节点数目为 m
+* listB 中节点数目为 n
+* 0 <= m, n <= 3 * 104
+* 1 <= Node.val <= 105
+* 0 <= skipA <= m
+* 0 <= skipB <= n
+* 如果 listA 和 listB 没有交点，intersectVal 为 0
+* 如果 listA 和 listB 有交点，intersectVal == listA[skipA + 1] == listB[skipB + 1]
+ 
+进阶：你能否设计一个时间复杂度 O(n) 、仅用 O(1) 内存的解决方案？
+
+## 理解
+解法一：利用set存储链表一中的所有节点，遍历链表二，如果遍历的节点包含在set中，即为相交的节点。
+解法二：如果两个链表有相交的节点，那么两个链表肯定有自相交处往回节点都是相同的，长度也是一致的，
+那么优先处理较长的链表使它与较短的一样长，再一起往下遍历节点，直到找到遍历的节点相等时为相交节点。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_160_1_相交链表 {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode node = headA;
+        Set<ListNode> set = new HashSet<>();
+        set.add(node);
+        while (node.next != null) {
+            node = node.next;
+            set.add(node);
+        }
+        node = headB;
+        while (node != null) {
+            if (set.contains(node)) {
+                return node;
+            }
+            node = node.next;
+        }
+        return null;
+    }
+}
+
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_160_2_相交链表 {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode a = headA, b = headB;
+        int m = 0, n = 0;
+        while (a != null) {
+            m++;
+            a = a.next;
+        }
+        while (b != null) {
+            n++;
+            b = b.next;
+        }
+        int t = Math.abs(m - n);
+        a = headA;
+        b = headB;
+        while (t-- != 0) {
+            if (m > n) {
+                a = a.next;
+            } else {
+                b = b.next;
+            }
+        }
+        while (a != null) {
+            if (a.equals(b)) {
+                return a;
+            }
+            a = a.next;
+            b = b.next;
+        }
+        return null;
+    }
+}
+```
+
+# [LeetCode_474_1_一和零](https://leetcode-cn.com/problems/ones-and-zeroes/)
+## 题目
+给你一个二进制字符串数组 strs 和两个整数 m 和 n 。
+
+请你找出并返回 strs 的最大子集的大小，该子集中 最多 有 m 个 0 和 n 个 1 。
+
+如果 x 的所有元素也是 y 的元素，集合 x 是集合 y 的 子集 。
+
+示例 1：
+```
+输入：strs = ["10", "0001", "111001", "1", "0"], m = 5, n = 3
+输出：4
+解释：最多有 5 个 0 和 3 个 1 的最大子集是 {"10","0001","1","0"} ，因此答案是 4 。
+其他满足题意但较小的子集包括 {"0001","1"} 和 {"10","1","0"} 。{"111001"} 不满足题意，因为它含 4 个 1 ，大于 n 的值 3 。
+```
+
+示例 2：
+```
+输入：strs = ["10", "0", "1"], m = 1, n = 1
+输出：2
+解释：最大的子集是 {"0", "1"} ，所以答案是 2 。
+```
+
+提示：
+
+* 1 <= strs.length <= 600
+* 1 <= strs[i].length <= 100
+* strs[i] 仅由 '0' 和 '1' 组成
+* 1 <= m, n <= 100
+
+## 理解
+动态规划问题，优先处理字符串列表，记录每个字符串中0和1的数量。定义  
+f[k][i][j] 代表考虑前 k 件物品，在数字 1 容量不超过 i，数字 0 容量不超过 j 的条件下的「最大价值」（每个字符串的价值均为 1）。  
+我们可以得到转移方程:  
+f[k][i][j]=max(f[k−1][i][j],f[k−1][i−cnt[k][0]][j−cnt[k][1]]+1)
+
+### 代码
+```java
+public class LeetCode_474_1_一和零 {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int length = strs.length;
+        // 定义并初始化记录每个字符串中0和1数量的二维数组
+        int[][] cnt = new int[length][2];
+        for (int i = 0; i < length; i++) {
+            int zero = 0, one = 0;
+            String str = strs[i];
+            for (char a : str.toCharArray()) {
+                if (a == '0') {
+                    zero++;
+                } else {
+                    one++;
+                }
+                cnt[i] = new int[]{zero, one};
+            }
+        }
+
+        // f[k][i][j]表示遍历过k个字符串，最多i个0，j个1，所得的分数（选中一个字符串得一分）
+        int[][][] f = new int[length + 1][m + 1][n + 1];
+        for (int k = 1; k < length + 1; k++) {
+            int zero = cnt[k - 1][0], one = cnt[k - 1][1];
+            for (int i = 0; i < m + 1; i++) {
+                for (int j = 0; j < n + 1; j++) {
+                    // 不选第k个字符串
+                    int a = f[k - 1][i][j];
+                    // 选第k个字符串
+                    int b = (i >= zero && j >= one) ? f[k - 1][i - zero][j - one] + 1 : 0;
+                    f[k][i][j] = Math.max(a , b);
+                }
+            }
+        }
+        return f[length][m][n];
+    }
+}
+```
