@@ -191,3 +191,103 @@ public class LeetCode_879_1_盈利计划 {
     }
 }
 ```
+
+# [LeetCode_518_1_零钱兑换II](https://leetcode-cn.com/problems/coin-change-2/)
+## 题目
+给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。 
+
+
+示例 1:
+```
+输入: amount = 5, coins = [1, 2, 5]
+输出: 4
+解释: 有四种方式可以凑成总金额:
+5=5
+5=2+2+1
+5=2+1+1+1
+5=1+1+1+1+1
+```
+
+示例 2:
+```
+输入: amount = 3, coins = [2]
+输出: 0
+解释: 只用面额2的硬币不能凑成总金额3。
+```
+
+示例 3:
+```
+输入: amount = 10, coins = [10] 
+输出: 1
+```
+ 
+注意:
+
+你可以假设：
+
+* 0 <= amount (总金额) <= 5000
+* 1 <= coin (硬币面额) <= 5000
+* 硬币种类不超过 500 种
+* 结果符合 32 位符号整数
+
+## 理解
+解法一：使用动态规划，使用二维动态规划解决，f[i][j]代表使用前i种硬币，凑成金额j的所有方案数。  
+考虑i和j的取值范围，i为金币的种类，j为目标金额。  
+初始化动态数组f[0][0] = 1，表示使用0种硬币，凑成金额0的方案数为1。  
+考虑状态转移方程，遍历到第i-1种硬币时，总有两种情况，选择第i-1种硬币和不选第i种硬币  
+不选，f[i][j] = f[i - 1][j]  
+选择第i种，要考虑选[1, j/coins[i-1]]个的情况总和，f[i][j] += f[i - 1][j - k * coins[i - 1]]，k代表
+选择个数
+
+解法二：优惠为一维动态规划，省略物品纬度即硬币纬度，f[j]代表凑金额为j的总的方案数。  
+j的取值范围为目标金额。  
+初始化f[0] = 1，表示凑成金额0的方案数为1，就是什么都不选。  
+考虑状态转移方程，还是需要遍历所有的种类金币，遍历每种金币时，都对[0,j]金额的方案数做累加，
+直到所有种类的硬币遍历完。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_518_1_零钱兑换II {
+    public int change(int amount, int[] coins) {
+        int n = coins.length;
+        // f[i][j]代表利用前i种硬币凑成金额j总共的方案数
+        int[][] f = new int[n + 1][amount + 1];
+        // 初始化没有硬币，凑成金额0，方案数为1
+        f[0][0] = 1;
+        for (int i = 1; i <= n; i++) {
+            int value = coins[i -1];
+            for (int j = 0; j <= amount; j++) {
+                // 不选第i-1种硬币
+                f[i][j] = f[i - 1][j];
+                // 选第i-1种硬币
+                for (int k = 1; k * value <= j; k++) {
+                    f[i][j] += f[i - 1][j - k * value];
+                }
+            }
+        }
+        return f[n][amount];
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_518_2_零钱兑换II {
+    public int change(int amount, int[] coins) {
+        int n = coins.length;
+        // f[j]代表凑成金额j总共的方案数
+        int[] f = new int[amount + 1];
+        f[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            int value = coins[i -1];
+            // 金额从value上涨的过程中其实已经包含了选择【1,amount/coins[i-1]】个该种硬币的过程
+            for (int j = value; j <= amount; j++) {
+                f[j] += f[j - value];
+            }
+        }
+        return f[amount];
+    }
+}
+```
