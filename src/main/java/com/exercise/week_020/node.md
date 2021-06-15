@@ -291,3 +291,145 @@ public class LeetCode_518_2_零钱兑换II {
     }
 }
 ```
+# [LeetCode_279_1_完全平方数](https://leetcode-cn.com/problems/perfect-squares/)
+## 题目
+给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。
+
+给你一个整数 n ，返回和为 n 的完全平方数的 最少数量 。
+
+完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，1、4、9 和 16 都是完全平方数，而 3 和 11 不是。
+
+示例 1：
+```
+输入：n = 12
+输出：3 
+解释：12 = 4 + 4 + 4
+```
+
+示例 2：
+```
+输入：n = 13
+输出：2
+解释：13 = 4 + 9
+```
+ 
+提示：
+
+* 1 <= n <= 104
+
+## 理解
+解法一：朴素dp解法，预处理出所有符合条件的完全平方数存入list，定义状态为f[i][j]代表使用前i-1个完全
+平方数凑成和为j的最少平方数数量  
+i和j的取值范围为list的长度和n+1  
+初始化值，因为我们知道第一个完全平方数是1，所以有j的值是多少，就需要多少个数来凑成j值，所以初始化所有
+的f[0][j] = j  
+考虑转移方程，当遍历到i时，我们可以不选择坐标为i的完全平方数，此时f[i][j] = f[i - 1][j]  
+我们也可以选择坐标为i的完全平方数，此时需要考虑选几次，k数值范围为[1,j/list.get[i]]，从中取最小值，
+f[i][j] = Math.min(f[i][j], f[i - 1][j - k * t] + k) 
+
+解法二：优惠为一维动态规划，省略物品纬度即完全平方数纬度，f[j]代表凑值为j的最少平方数数量。  
+j的取值范围为目标值。  
+初始化f[0] = 0，表示凑成值为0的数，需要0个平方数，其余值先初始化为一个较大值。  
+考虑状态转移方程，还是需要遍历所有的种类满足条件的平方数，遍历每种平方数t时，都对[t,n]值的dp数组重新计算，
+求取f[j]与f[j - t]中的较小值，直到所有的平方数遍历完。
+
+## 解法一
+### 代码
+```java
+public class LeetCode_279_1_完全平方数 {
+    public int numSquares(int n) {
+        // 预处理出所有的完全平方数，存入list
+        int ids = 1;
+        List<Integer> list = new ArrayList<>();
+        while (ids * ids <= n) {
+            list.add(ids * ids);
+            ids++;
+        }
+        int length = list.size();
+        // 定义dp数组，f[i][j]代表使用前i + 1个完全平方数凑成j的最少平方数数量
+        int[][] f = new int[length][n + 1];
+        // 预处理使用第一个数的情况，因为第一个完全平方数1，相当于初始化dp数组
+        for (int j = 0; j <= n; j++) {
+            f[0][j] = j;
+        }
+        // 处理除第一个数以外的情况
+        for (int i = 1; i < length; i++) {
+            int t = list.get(i);
+            for (int j = 0; j <= n; j++) {
+                // 不选择坐标为i的数
+                f[i][j] = f[i - 1][j];
+                // 选择坐标为i的数
+                for (int k = 1; k * t <= j; k++) {
+                    f[i][j] = Math.min(f[i][j], f[i - 1][j - k * t] + k);
+                }
+            }
+        }
+        return f[length - 1][n];
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_279_2_完全平方数 {
+    public int numSquares(int n) {
+        // 定义dp数组，f[j]代表凑成j，需要的完全平方数数量
+        int[] f = new int[n + 1];
+        Arrays.fill(f, 0x3f3f3f3f);
+        f[0] = 0;
+        for (int i = 1; i * i <= n ; i++) {
+            int t = i * i;
+            for (int j = t; j <= n; j++) {
+                f[j] = Math.min(f[j], f[j - t] + 1);
+            }
+        }
+        return f[n];
+    }
+}
+```
+
+# [LeetCode_278_1_第一个错误的版本](https://leetcode-cn.com/problems/first-bad-version/)
+## 题目
+你是产品经理，目前正在带领一个团队开发新的产品。不幸的是，你的产品的最新版本没有通过质量检测。由于每个版本都是基于之前的版本开发的，所以错误的版本之后的所有版本都是错的。
+
+假设你有 n 个版本 [1, 2, ..., n]，你想找出导致之后所有版本出错的第一个错误的版本。
+
+你可以通过调用 bool isBadVersion(version) 接口来判断版本号 version 是否在单元测试中出错。实现一个函数来查找第一个错误的版本。你应该尽量减少对调用 API 的次数。
+
+示例:
+```
+给定 n = 5，并且 version = 4 是第一个错误的版本。
+
+调用 isBadVersion(3) -> false
+调用 isBadVersion(5) -> true
+调用 isBadVersion(4) -> true
+
+所以，4 是第一个错误的版本。 
+```
+
+## 理解
+使用二分法求解，
+
+### 代码
+```java
+public class LeetCode_278_1_第一个错误的版本 {
+    public int firstBadVersion(int n) {
+        int left = 0, right = n;
+        while (left < right) {
+            long tmp = (long)left + right >> 1;
+            int mid = (int)tmp;
+            if (isBadVersion(mid)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    private boolean isBadVersion(int mid) {
+        return false;
+    }
+}
+```
