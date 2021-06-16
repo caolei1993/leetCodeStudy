@@ -106,6 +106,79 @@ public class LeetCode_494_2_目标和 {
 }
 ```
 
+# [LeetCode_1049_1_最后一块石头的重量II](https://leetcode-cn.com/problems/last-stone-weight-ii/)
+## 题目
+有一堆石头，用整数数组 stones 表示。其中 stones[i] 表示第 i 块石头的重量。
+
+每一回合，从中选出任意两块石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
+
+如果 x == y，那么两块石头都会被完全粉碎；  
+如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。  
+最后，最多只会剩下一块 石头。返回此石头 最小的可能重量 。如果没有石头剩下，就返回 0。  
+
+示例 1：
+```
+输入：stones = [2,7,4,1,8,1]
+输出：1
+解释：
+组合 2 和 4，得到 2，所以数组转化为 [2,7,1,8,1]，
+组合 7 和 8，得到 1，所以数组转化为 [2,1,1,1]，
+组合 2 和 1，得到 1，所以数组转化为 [1,1,1]，
+组合 1 和 1，得到 0，所以数组转化为 [1]，这就是最优值。
+```
+
+示例 2：
+```
+输入：stones = [31,26,33,21,40]
+输出：5
+```
+
+示例 3：
+```
+输入：stones = [1,2]
+输出：1
+```
+
+提示：
+
+* 1 <= stones.length <= 30
+* 1 <= stones[i] <= 100
+
+## 理解
+动态规划dp问题，可以考虑为将所有石头分为两堆，每堆总和看做新的大石头，按照题意求两个石头重量差的最小值，
+相当于求取在所有石头中选石头总和小于等于sum/2的最大值。定义dp二维数组f[i][j]表示考虑前i块石头的情况下，
+重量小于等于j的最大值。  
+i为石头的总数，j为石头总重量除以2。  
+遍历所有石头，每个石头都有选和不选两种情况，不选的时候f[i][j] = f[i - 1][j]，  
+选的时候f[i][j] = f[i - 1][j - stones[i - 1]] + stores[i - 1]，结果取两者中的较大值。  
+最终结果为两堆重量总和相减，sum-f[n][sum/2]-f[n][sum/2]
+
+### 代码
+```java
+public class LeetCode_1049_1_最后一块石头的重量II {
+    public int lastStoneWeightII(int[] stones) {
+        int n = stones.length;
+        int sum = 0;
+        for (int stone : stones) {
+            sum += stone;
+        }
+        int t = sum / 2;
+        int[][] f = new int[n + 1][t + 1];
+        for (int i = 1; i <= n ; i++) {
+            int s = stones[i - 1];
+            for (int j = 0; j <= t ; j++) {
+                f[i][j] = f[i - 1][j];
+                if (j - s >= 0) {
+                    f[i][j] =Math.max(f[i][j], f[i - 1][j - s] + s);
+                }
+            }
+        }
+        return Math.abs(sum - f[n][t] - f[n][t]);
+    }
+}
+```
+
+
 # [LeetCode_879_1_盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)
 ## 题目
 集团里有 n 名员工，他们可以完成各种各样的工作创造利润。
