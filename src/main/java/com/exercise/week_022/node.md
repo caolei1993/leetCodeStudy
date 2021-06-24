@@ -214,3 +214,106 @@ public class LeetCode_剑指Offer15_2_二进制中1的个数 {
 
 }
 ```
+# [LeetCode_149_1_直线上最多的点数](https://leetcode-cn.com/problems/max-points-on-a-line/)
+## 题目
+给你一个数组 points ，其中 points[i] = [xi, yi] 表示 X-Y 平面上的一个点。求最多有多少个点在同一条直线上。
+
+示例 1：
+
+```
+输入：points = [[1,1],[2,2],[3,3]]
+输出：3
+```
+
+示例 2：
+
+```
+输入：points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+输出：4
+```
+
+提示：
+
+* 1 <= points.length <= 300
+* points[i].length == 2
+* -104 <= xi, yi <= 104
+* points 中的所有点 互不相同
+
+## 理解
+解法一：暴力枚举，每次枚举三个点，计算他们的斜率（注意除法可能会失去精度，转化为乘法运算），
+如果斜率相等即在同一条直线上。  
+两个点确认一条直线，遍历第三个点，确认当前直线上的点数。  
+每遍历完一条直线，取ans和当前直线点数中的较大值。
+
+解法二：枚举所有直线的过程不可避免，但统计点数的过程可以优化  
+具体的，我们可以先枚举所有可能出现的 直线斜率（根据两点确定一条直线，即枚举所有的「点对」），
+使用「哈希表」统计所有 斜率 对应的点的数量，在所有值中取个 max 即是答案
+
+遍历所有点作为端点，遍历该端点下的所有点与端点的斜率，统计斜率，并取出点数最大值，
+继续遍历下一个端点，最终返回点数的最大值。
+
+
+## 解法一
+### 代码
+```java
+public class LeetCode_149_1_直线上最多的点数 {
+    public int maxPoints(int[][] points) {
+        int n = points.length;
+        int ans = 1;
+        for (int i = 0; i < n ; i++) {
+            int cnt = 1;
+            int[] x = points[i];
+            for (int j = i + 1; j < n; j++) {
+                int[] y = points[j];
+                cnt = 2;
+                for (int k = j + 1; k < n; k++) {
+                    int[] p = points[k];
+                    int s1 = (y[1] - x[1]) * (p[0] - y[0]);
+                    int s2 = (y[0] - x[0]) * (p[1] - y[1]);
+                    if (s1 == s2) {
+                        cnt++;
+                    }
+                }
+                ans = Math.max(ans, cnt);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 代码
+```java
+public class LeetCode_149_2_直线上最多的点数 {
+    public int maxPoints(int[][] points) {
+        int n = points.length;
+        int ans = 1;
+        for (int i = 0; i < n ; i++) {
+            Map<String, Integer> map = new HashMap<>();
+            // 记录从i点出发的所有直线上的最多点数个数
+            int max = 0;
+            for (int j = i + 1; j < n; j++) {
+                int x1 = points[i][0], y1 = points[i][1], x2 = points[j][0], y2 = points[j][1];
+                int a = x1 - x2, b = y1 - y2;
+                int k = gcd(a, b);
+                String key = (a / k) + "_" + (b / k);
+                // 默认值为1，即包含i节点
+                map.put(key, map.getOrDefault(key, 1) + 1);
+                max = Math.max(max, map.get(key));
+            }
+            ans = Math.max(ans, max);
+        }
+        return ans;
+    }
+
+    /**
+     * 求取两个数的最大公约数
+     * @param a
+     * @param b
+     * @return
+     */
+    private int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+}
+```
