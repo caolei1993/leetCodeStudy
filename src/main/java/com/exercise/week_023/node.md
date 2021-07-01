@@ -363,3 +363,109 @@ public class LeetCode_剑指Offer37_1_序列化二叉树 {
     }
 }
 ```
+
+# [LeetCode_LCP07_1_传递信息](https://leetcode-cn.com/problems/chuan-di-xin-xi/)
+## 题目
+小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+
+1. 有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0
+2. 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。
+3. 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人
+
+给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
+
+示例 1：
+```
+输入：n = 5, relation = [[0,2],[2,1],[3,4],[2,3],[1,4],[2,0],[0,4]], k = 3
+
+输出：3
+
+解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0->2->0->4， 0->2->1->4， 0->2->3->4。
+```
+
+示例 2：
+```
+输入：n = 3, relation = [[0,2],[2,1]], k = 2
+
+输出：0
+
+解释：信息不能从小 A 处经过 2 轮传递到编号 2
+```
+
+限制：
+
+* 2 <= n <= 10
+* 1 <= k <= 5
+* 1 <= relation.length <= 90, 且 relation[i].length == 2
+* 0 <= relation[i][0],relation[i][1] < n 且 relation[i][0] != relation[i][1]
+
+## 理解
+解法一：图论常规bfs，利用map初始化每个位置可以向下传递的坐标，通过k次传递，遍历队列查找位置为n-1出现的
+次数。
+
+解法二：动态规划，我们假设现在已经走了i步，到达位置j，剩余的步数为k-i，我们不关注是如何走到i的，只
+关注剩余的k-i步是否能走到目标位置n-1。所以这是一个无后效性问题，可以使用动态规划解决。  
+* 确认状态定义f[i][j]意义为走了i步到达坐标为j的位置的方案数。i的范围为[0, k]，j的范围为[0, n-1]
+* 确认初始化值，f[0][0] = 1，代表走0步，在坐标为0的位置的方案数为1，即最初状态
+* 确认转移方程 f[i][j] = f[i-1][a] + ... + f[i-1][n]，a...n代表所有能一步走到j的坐标
+
+最终返回f[k][n-1]即可
+
+## 解法一
+### 代码
+```java
+public class LeetCode_LCP07_1_传递信息 {
+    // 记录每个人对应的传递关系
+    Map<Integer, Set<Integer>>  map = new HashMap<>();
+    public int numWays(int n, int[][] relation, int k) {
+        // 遍历所有的传递关系，初始化map
+        for (int[] re : relation) {
+            Set<Integer> set = map.getOrDefault(re[0], new HashSet<>());
+            set.add(re[1]);
+            map.put(re[0], set);
+        }
+        int ans = 0;
+        Deque<Integer> deque = new ArrayDeque<>();
+        deque.add(0);
+        for (int i = 0; i < k; i++) {
+            Deque<Integer> deque1 = new ArrayDeque<>();
+            if (deque.isEmpty()) {
+                return 0;
+            }
+            while (!deque.isEmpty()) {
+                int a = deque.poll();
+                Set<Integer> ways = map.getOrDefault(a, new HashSet<>());
+                for (int way : ways) {
+                    if (i == k - 1 && way == n - 1) {
+                        ans++;
+                    }
+                    deque1.offer(way);
+                }
+            }
+            deque = deque1;
+        }
+        return ans;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_LCP07_2_传递信息 {
+    public int numWays(int n, int[][] relation, int k) {
+
+        // 定义dp二维数组，f[i][j]代表走了i步，当前位置在坐标为j的位置的方案总数
+        int[][] f = new int[k + 1][n];
+        // 初始化走0步，在index=0的位置的方案为1
+        f[0][0] = 1;
+        for (int i = 1; i <= k ; i++) {
+            for (int[] r : relation) {
+                int a = r[0], b = r[1];
+                f[i][b] += f[i - 1][a];
+            }
+        }
+        return f[k][n - 1];
+    }
+}
+```
