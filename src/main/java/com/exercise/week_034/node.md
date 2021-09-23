@@ -218,3 +218,101 @@ public class LeetCode_725_1_分隔链表 {
     }
 }
 ```
+
+# [LeetCode_326_1_3的幂](https://leetcode-cn.com/problems/power-of-three/)
+## 题目
+给定一个整数，写一个函数来判断它是否是 3 的幂次方。如果是，返回 true ；否则，返回 false 。
+
+整数 n 是 3 的幂次方需满足：存在整数 x 使得 n == 3^x
+
+ 
+示例 1：
+```
+输入：n = 27
+输出：true
+```
+
+示例 2：
+```
+输入：n = 0
+输出：false
+```
+
+示例 3：
+```
+输入：n = 9
+输出：true
+```
+
+示例 4：
+```
+输入：n = 45
+输出：false
+```
+ 
+
+提示：
+
+* -2^31 <= n <= 2^31 - 1
+ 
+进阶：
+
+* 你能不使用循环或者递归来完成本题吗？
+
+## 理解
+解法一：数学常规方法，使用了while循环  
+时间复杂度为O(log以3为底的n)，空间复杂度为O(1)  
+
+解法二：题目要求不使用循环和递归，题目传参n的取值范围为int的范围，我们首先确认出int类型中最大的3次幂
+的值，约为3^19=1162261467  
+如果n为3的幂的话，必然满足n*3^k = 1162261467，即n必然是1162261467的一个约数，所以我们只需要判断
+n是否是1162261467的约数即可  
+时间复杂度为O(1)，空间复杂度为O(1)
+
+解法三：使用静态代码块提前求出int范围内为整数的3的幂，存入set，后面直接判断n是否被set包含即可  
+时间复杂度O(log以3为底的C)，C是常数，是int的最大值，所以时间复杂度可以看做O(1)，空间复杂度为O(logn)
+
+## 解法一
+### 代码
+```java
+public class LeetCode_326_1_3的幂 {
+    public boolean isPowerOfThree(int n) {
+        if (n <= 0) {
+            return false;
+        }
+        while (n % 3 == 0) {
+            n /= 3;
+        }
+        return n == 1;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_326_2_3的幂 {
+    public boolean isPowerOfThree(int n) {
+        return n > 0 && 1162261467 % n == 0;
+    }
+}
+```
+
+## 解法三
+### 代码
+```java
+public class LeetCode_326_3_3的幂 {
+    static Set<Integer> set = new HashSet<>();
+    static {
+        int v = 1;
+        set.add(v);
+        while (v <= Integer.MAX_VALUE / 3) {
+            v *= 3;
+            set.add(v);
+        }
+    }
+    public boolean isPowerOfThree(int n) {
+        return n > 0 && set.contains(n);
+    }
+}
+```
