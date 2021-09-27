@@ -442,3 +442,188 @@ public class LeetCode_430_1_扁平化多级双向链表 {
     }
 }
 ```
+
+# [LeetCode_583_1_两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)
+## 题目
+给定两个单词 word1 和 word2，找到使得 word1 和 word2 相同所需的最小步数，每步可以删除任意一个字符串中的一个字符。
+
+ 
+示例：
+```
+输入: "sea", "eat"
+输出: 2
+解释: 第一步将"sea"变为"ea"，第二步将"eat"变为"ea"
+```
+
+提示：
+
+* 给定单词的长度不超过500。
+* 给定单词中的字符只含有小写字母。
+
+## 理解
+解法一：将问题转化为LCS问题（最长公共子序列），求取到最长公共子序列长度后，在用两个字符串的长度分别减
+去最长公共子序列长度，再相加即为答案  
+
+状态定义f[i][j]代表word1前i个字符与word2前j个字符的最大公共子序列长度（为了避免边界判断，假想添加
+了空格前缀）
+
+初始化初始值，所有的f[i][0]与f[0][j]都为1，因为假想了空格前缀  
+
+不失一般性的考虑一下转移方程：  
+* 如果s1[i] == s2[j]，那么f[i][j] = f[i - 1][j - 1] + 1
+* 如果不相等，f[i][j] = Math.max(f[i - 1][j], f[i][j - 1])
+
+最终结果为f[n][m] - 1，减去假想的空格的长度1
+
+时间复杂度为O(n*m)，空间复杂度为O(n*m)
+
+解法二：可以在上述思想的基础上，契合题意做相应的变通  
+
+状态定义f[i][j]代表word1的前i个字符与word2前j个字符，在改变为相等字符串时，最小的操作次数  
+
+初始值初始化，f[i][0] = i，f[0][j] = j
+
+转移方程：
+* 如果s1[i] == s2[j]，那么不需要删除，f[i][j] = f[i - 1][j - 1]
+* 如果不相等，则f[i][j] = Math.min(f[i - 1][j] + 1， f[i][j - 1] + 1)
+
+最终返回f[n][m]
+
+时间复杂度为O(n*m)，空间复杂度为O(n*m)
+
+## 解法一
+### 代码
+```java
+public class LeetCode_583_1_两个字符串的删除操作 {
+    public int minDistance(String word1, String word2) {
+        char[] s1 = word1.toCharArray();
+        char[] s2 = word2.toCharArray();
+        int n = s1.length, m = s2.length;
+        int[][] f = new int[n + 1][m + 1];
+        for (int i = 0; i <= n; i++) {
+            f[i][0] = 1;
+        }
+
+        for (int j = 0; j <= m; j++) {
+            f[0][j] = 1;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                f[i][j] = Math.max(f[i - 1][j], f[i][j - 1]);
+                if (s1[i - 1] == s2[j - 1]) {
+                    f[i][j] = f[i - 1][j - 1] + 1;
+                }
+            }
+        }
+        int max = f[n][m] - 1;
+        return n - max + m - max;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_583_2_两个字符串的删除操作 {
+    public int minDistance(String word1, String word2) {
+        char[] c1 = word1.toCharArray();
+        char[] c2 = word2.toCharArray();
+        int n = c1.length, m = c2.length;
+        // 定义状态，f[i][j]表示字符串1的前i个字符，字符串2的前j个字符，修改为相同字符串最少的操作次数
+        int[][] f = new int[n + 1][m + 1];
+        for (int i = 0; i <= n; i++) {
+            f[i][0] = i;
+        }
+        for (int j = 0; j <= m; j++) {
+            f[0][j] = j;
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                // 两个字符不同，则取操作一次后取值较小者
+                f[i][j] = Math.min(f[i - 1][j] + 1, f[i][j - 1] + 1);
+                // 如果两个字符相等，则不需要删除
+                if (c1[i - 1] == c2[j - 1]) {
+                    f[i][j] = f[i - 1][j - 1];
+                }
+            }
+        }
+        // 减掉空格哨兵的一个长度
+        return f[n][m];
+    }
+}
+```
+
+# [LeetCode_371_1_两整数之和](https://leetcode-cn.com/problems/sum-of-two-integers/)
+## 题目
+给你两个整数 a 和 b ，不使用 运算符 + 和 - ，计算并返回两整数之和。
+
+
+示例 1：
+```
+输入：a = 1, b = 2
+输出：3
+```
+
+示例 2：
+```
+输入：a = 2, b = 3
+输出：5
+```
+
+提示：
+
+* -1000 <= a, b <= 1000
+
+## 理解
+解法一：我们逐位操作从低到高，再将结果合并在一起，u1，u2分别是a，b按位取的值，t用来记录低位是否有进位  
+1. u1，u2都为1时，当前位置的值取决于低位进位信息，即ans |= (t << i)，同时需要将进位信息置为1
+2. u1，u2有一个为1时，当前位置的值是 t ^ 1，即ans |= (t ^ 1) << i，此时无需处理进位信息，原先进位，
+则当前进位，原先不进位，则当前不进位
+3. u1，u2都为0时，当前位置的值也取决于低位进位信息，即ans |= (t << i)，此时进位信息需要置为0
+
+32位轮询完毕后，最终返回叠加的结果ans即可  
+时间复杂度为O(C)，C为常数32，空间复杂度为O(1)
+
+解法二：使用递归法求解  
+再不考虑进位的情况下，a和b的和的计算结果为a ^ b，然后在此基础上，我们可以考虑将进位累加进来，累加
+操作可以通过递归调用getSum方法实现  
+当a和b的当前位均为1时，该位才会产生进位，同时进位会影响当前位的下一位高位，因此进位的最终结果为
+a & b << 1  
+因此我们可以通过不断调用getSum(a ^ b，(a & b) << 1)来求取结果  
+我们需要考虑递归的截止条件，由于进位操作会不断操作右移操作，当右移次数最多32次之后，（a&b） << 1的结果
+为0，0与任何数相加都为0，此时递归截止  
+时间复杂度为O(C)，C为32，空间复杂度为O(C)
+
+## 解法一
+### 代码
+```java
+public class LeetCode_371_1_两整数之和 {
+    public int getSum(int a, int b) {
+        int ans = 0, t = 0;
+        for (int i = 0; i < 32; i++) {
+            int u1 = (a >> i) & 1, u2 = (b >> i) & 1;
+            if (u1 == 1 && u2 == 1) {
+                ans |= (t << i);
+                t = 1;
+            } else if (u1 == 1 || u2 == 1) {
+                ans |= (t ^ 1) << i;
+            } else {
+                ans |= (t << i);
+                t = 0;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_371_2_两整数之和 {
+    public int getSum(int a, int b) {
+        return b == 0 ? a : getSum(a ^ b, (a & b) << 1);
+    }
+}
+```
