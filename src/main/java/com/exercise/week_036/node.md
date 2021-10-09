@@ -233,3 +233,364 @@ public class LeetCode_414_2_第三大的数 {
 }
 
 ```
+
+# [LeetCode_434_1_字符串中的单词数](https://leetcode-cn.com/problems/number-of-segments-in-a-string/)
+## 题目
+统计字符串中的单词个数，这里的单词指的是连续的不是空格的字符。
+
+请注意，你可以假定字符串里不包括任何不可打印的字符。
+
+示例:
+```
+输入: "Hello, my name is John"
+输出: 5
+解释: 这里的单词是指连续的不是空格的字符，所以 "Hello," 算作 1 个单词。
+```
+
+## 理解
+解法一：使用字符串自带的split函数，但是注意需要过滤掉空元素
+
+时间复杂度为O(n)，空间复杂度为O(M)，M为分割后数组长度
+
+解法二：通过遍历，过滤掉空的元素，不为空时通过while循环找到单词结尾处并统计
+
+时间复杂度O(n)，空间复杂度为O(1)
+
+## 解法一
+### 代码
+```java
+public class LeetCode_434_1_字符串中的单词数 {
+    public int countSegments(String s) {
+        int ans = 0;
+        String[] ss = s.split(" ");
+        for (int i = 0; i < ss.length; i++) {
+            if (!ss[i].equals("")) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_434_2_字符串中的单词数 {
+    public int countSegments(String s) {
+        int n = s.length();
+        int ans = 0;
+        for (int i = 0; i < n;) {
+            if (s.charAt(i) == ' ') {
+                i++;
+                continue;
+            }
+            while (i < n && s.charAt(i) != ' ') {
+                i++;
+            }
+            ans++;
+        }
+        return ans;
+    }
+}
+```
+
+# [LeetCode_187_1_重复的DNA序列](https://leetcode-cn.com/problems/repeated-dna-sequences/)
+## 题目
+所有 DNA 都由一系列缩写为 'A'，'C'，'G' 和 'T' 的核苷酸组成，例如："ACGAATTCCG"。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。
+
+编写一个函数来找出所有目标子串，目标子串的长度为 10，且在 DNA 字符串 s 中出现次数超过一次。
+
+ 
+示例 1：
+```
+输入：s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+输出：["AAAAACCCCC","CCCCCAAAAA"]
+```
+
+示例 2：
+```
+输入：s = "AAAAAAAAAAAAA"
+输出：["AAAAAAAAAA"]
+```
+
+提示：
+
+* 0 <= s.length <= 10^5
+* s[i] 为 'A'、'C'、'G' 或 'T'
+
+## 理解
+解法一：滑动窗口+哈希表  
+使用滑动窗口，依次获取以i为结尾的长度为10的子串，利用哈希表记录子串及出现次数，防止答案有重复，我们
+在判断首次确认有重复时才添加为答案  
+
+时间复杂度为O(n*C)，C为常数，是子串的固定长度10  
+空间复杂度为O(n)
+
+解法二：滑动窗口+哈希表+位运算  
+由于s中只包含4种字符，我们可以将每个字符用一个二进制数字表示：
+* 'A'表示为二进制00
+* 'C'表示为二进制01
+* 'G'表示为二进制02
+* 'T'表示为二进制03
+
+如此以来，一个长为10的字符串就可以用一个20byte表示，一个int值有32byte，我们只用低20位即可。
+
+有了上述的映射，我们就可以将每个子串映射为一个int值，再通过哈希表存入值与出现的次数，进而判断
+子串是否重复
+* 滑动窗口右移一位， x = x << 2，因为每个字符用两个byte表示，所以需要左移两位留出空位等待新字符填补
+* 一个新字符进入窗口，x |= map.get(ch)，这里的map.get(ch)是为了取ch对应的二进制数
+* 窗口最左边的字符离开窗口，x &= ((1 << 20) - 1)，因为我们只考虑低20位，所以将值与低20位为20个1的
+值相与，获取当前值的低20位
+
+将这三步合并，我们就可以在O(1)时间复杂度下计算出一个表示子字符串的整数，即:   
+x = ((x << 2) | map.get(ch)) & ((1 << 20) - 1)
+
+优化后时间复杂度为O(n)，空间复杂度为O(n)
+
+
+## 解法一
+### 代码
+```
+public class LeetCode_187_1_重复的DNA序列 {
+    public List<String> findRepeatedDnaSequences(String s) {
+        List<String> ans = new ArrayList<>();
+        int n = s.length();
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 10; i <= n; i++) {
+            String subStr = s.substring(i - 10, i);
+            int cnt = map.getOrDefault(subStr, 0);
+            if (cnt == 1) {
+                ans.add(subStr);
+            }
+            map.put(subStr, cnt + 1);
+        }
+        return ans;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_187_2_重复的DNA序列 {
+    static final int L = 10;
+    Map<Character, Integer> map = new HashMap<Character, Integer>(){{
+        put('A', 0);
+        put('C', 1);
+        put('G', 2);
+        put('T', 3);
+    }};
+    public List<String> findRepeatedDnaSequences(String s) {
+        List<String> ans = new ArrayList<>();
+        int n = s.length();
+        if (n < L) {
+            return ans;
+        }
+        int val = 0;
+        // 求取前9个字符的值
+        for (int i = 0; i < L - 1; i++) {
+            val = (val << 2) | map.get(s.charAt(i));
+        }
+
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int i = 0; i + L <= n; i++) {
+            val = ((val << 2) | map.get(s.charAt(i + L - 1))) & ((1 << (L * 2)) - 1);
+            int c = cnt.getOrDefault(val, 0);
+            if (c == 1) {
+                ans.add(s.substring(i, i + L));
+            }
+            cnt.put(val, c + 1);
+        }
+
+        return ans;
+    }
+}
+```
+
+# [LeetCode_352_1_将数据流变为多个不相交区间](https://leetcode-cn.com/problems/data-stream-as-disjoint-intervals/)
+## 题目
+ 给你一个由非负整数 a1, a2, ..., an 组成的数据流输入，请你将到目前为止看到的数字总结为不相交的区间列表。
+
+实现 SummaryRanges 类：
+
+* SummaryRanges() 使用一个空数据流初始化对象。
+* void addNum(int val) 向数据流中加入整数 val 。
+* int[][] getIntervals() 以不相交区间 [starti, endi] 的列表形式返回对数据流中整数的总结。
+ 
+
+示例：
+```
+输入：
+["SummaryRanges", "addNum", "getIntervals", "addNum", "getIntervals", "addNum", "getIntervals", "addNum", "getIntervals", "addNum", "getIntervals"]
+[[], [1], [], [3], [], [7], [], [2], [], [6], []]
+输出：
+[null, null, [[1, 1]], null, [[1, 1], [3, 3]], null, [[1, 1], [3, 3], [7, 7]], null, [[1, 3], [7, 7]], null, [[1, 3], [6, 7]]]
+
+解释：
+SummaryRanges summaryRanges = new SummaryRanges();
+summaryRanges.addNum(1);      // arr = [1]
+summaryRanges.getIntervals(); // 返回 [[1, 1]]
+summaryRanges.addNum(3);      // arr = [1, 3]
+summaryRanges.getIntervals(); // 返回 [[1, 1], [3, 3]]
+summaryRanges.addNum(7);      // arr = [1, 3, 7]
+summaryRanges.getIntervals(); // 返回 [[1, 1], [3, 3], [7, 7]]
+summaryRanges.addNum(2);      // arr = [1, 2, 3, 7]
+summaryRanges.getIntervals(); // 返回 [[1, 3], [7, 7]]
+summaryRanges.addNum(6);      // arr = [1, 2, 3, 6, 7]
+summaryRanges.getIntervals(); // 返回 [[1, 3], [6, 7]]
+```
+
+提示：
+
+* 0 <= val <= 10^4
+* 最多调用 addNum 和 getIntervals 方法 3 * 10^4 次
+ 
+
+进阶：如果存在大量合并，并且与数据流的大小相比，不相交区间的数量很小，该怎么办?
+
+## 理解
+解法一：二分 + List存储区间  
+
+我们使用List来存储不相交的区间，存入的过程我们需要维护其单调性，方便我们在新的值加入时，使用二分法
+快速找到其相邻的区间，并判断值与区间的关系。  
+* 值在左区间中
+* 值连接了左区间和右区间，需要做区间合并
+* 值是左区间上边界的临界值+1，需要扩展左区间的上界
+* 值是右区间下边界的临界值-1，需要扩展右区间的下界
+* 值不与左右区间相交，创建新的不相交区间
+
+m为不相交区间的数量  
+
+时间复杂度：addNum方法，二分查询值的相邻区间的复杂度为O(logm)，但是我们需要维护集合的单调性，插入的时候需要指定
+下标插入数据，插入的复杂度为O(m)，所以整体的复杂度为O(m)，getIntervals需要遍历集合，整体复杂度为O(m)  
+空间复杂度为O(m)
+
+解法二：TreeSet存储区间  
+TreeSet的底层数据结构是红黑树，他的插入和删除操作都能在O(logn)级别完成，所以我们可以利用TreeSet来
+优化我们的时间复杂度  
+
+而且我们可以使用TreeSet自带的floor和ceiling方法来找传入值的相邻的区间，因为值不可能与上区间有交集
+所以找右相邻区间时也可以使用higher方法，效果都是一样的。同时为了简化复杂的分情况讨论，
+起始时我们可以先往 TreeSet 添加两个哨兵分别代表正无穷和负无穷，以确保调用 floor/ceiling 
+时不会返回空。
+
+获取区间可以使用for循环，也可以使用迭代器
+
+时间复杂度：addNum方法复杂度优化到O(logm)，getIntervals为O(m)  
+空间复杂度：O(m)
+
+## 解法一
+### 代码
+```java
+public class LeetCode_352_1_将数据流变为多个不相交区间 {
+    /**
+     * 用来保存不相交区间的集合
+     */
+    List<int[]> list = new ArrayList<>();
+    /**
+     * 定义哨兵头区间和尾区间
+     */
+    int[] head = new int[]{-10, -10}, tail = new int[]{10010, 10010};
+
+    public LeetCode_352_1_将数据流变为多个不相交区间() {
+        list.add(head);
+        list.add(tail);
+    }
+
+    public void addNum(int val) {
+        int n = list.size();
+//        if (n == 2) {
+//            list.add(1, new int[]{val, val});
+//            return;
+//        }
+        // 通过二分法，查找相邻的区间
+        int l = 0, r = n - 1;
+        while (l < r) {
+            int mid = l + r + 1 >> 1;
+            if (list.get(mid)[0] <= val) {
+                l = mid;
+            } else {
+                r = mid - 1;
+            }
+        }
+        int[] cur = new int[]{val, val};
+        int[] pre = list.get(r);
+        int[] next = list.get(r + 1);
+
+        if ((pre[0] <= val && pre[1] >= val)) {
+
+        } else if ((pre[1] + 1 == val) && (next[0] - 1 == val)) {
+            pre[1] = next[1];
+            list.remove(next);
+        } else if (pre[1] + 1 == val) {
+            pre[1] = val;
+        } else if (next[0] - 1 == val) {
+            next[0] = val;
+        } else {
+            list.add(r + 1, cur);
+        }
+    }
+
+    public int[][] getIntervals() {
+        int n = list.size();
+        int[][] ans = new int[n - 2][2];
+        int ids = 0;
+        for (int i = 1; i < n - 1; i++) {
+            ans[ids++] = list.get(i);
+        }
+        return ans;
+    }
+}
+
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_352_2_将数据流变为多个不相交区间 {
+    /**
+     * 用来保存不相交区间的集合
+     */
+    TreeSet<int[]> set = new TreeSet<>(Comparator.comparingInt(a -> a[0]));
+    /**
+     * 定义哨兵头区间和尾区间
+     */
+    int[] head = new int[]{-10, -10}, tail = new int[]{10010, 10010};
+
+    public LeetCode_352_2_将数据流变为多个不相交区间() {
+        set.add(head);
+        set.add(tail);
+    }
+
+    public void addNum(int val) {
+        int[] cur = new int[]{val, val};
+        int[] pre = set.floor(cur);
+        int[] next = set.higher(cur);
+        if ((pre[0] <= val) && (pre[1] >= val)) {
+
+        } else if ((pre[1] + 1 == val) && (next[0] - 1 == val)) {
+            pre[1] = next[1];
+            set.remove(next);
+        } else if (pre[1] + 1 == val) {
+            pre[1] = val;
+        } else if (next[0] - 1 == val) {
+            next[0] = val;
+        } else {
+            set.add(cur);
+        }
+    }
+
+    public int[][] getIntervals() {
+        int n = set.size();
+        int[][] ans = new int[n - 2][2];
+        Iterator<int[]> it = set.iterator();
+        it.next();
+        for (int i = 0; i < n - 2 ; i++) {
+            ans[i] = it.next();
+        }
+        return ans;
+    }
+}
+```
