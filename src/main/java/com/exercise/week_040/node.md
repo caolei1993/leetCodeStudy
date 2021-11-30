@@ -1,10 +1,13 @@
-package main.java.com.exercise.week_041;
+[toc]
 
-/**
- * @Author cl
- * @Date 2021/11/8 14:09
- * @Version 1.0
- */
+# [LeetCode_299_1_猜数字游戏](https://leetcode-cn.com/problems/bulls-and-cows/)
+## 理解
+遍历秘密数字和猜测数字每个位置，如果值相等，公牛数+1，否则记录各个数的词频，最终每个位置的最小值之
+和即为奶牛数量  
+时间复杂度为O(n)，空间复杂度为O(C)，C为常数大小为10
+
+### 代码
+```java
 public class LeetCode_299_1_猜数字游戏 {
     public String getHint(String secret, String guess) {
         int n = secret.length();
@@ -27,3 +30,4 @@ public class LeetCode_299_1_猜数字游戏 {
         return a + "A" + b + "B";
     }
 }
+```
