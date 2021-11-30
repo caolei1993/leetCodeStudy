@@ -73,3 +73,49 @@ public class LeetCode_786_2_第K个最小的素数分数 {
     }
 }
 ```
+
+# [LeetCode_400_1_第N位数字](https://leetcode-cn.com/problems/nth-digit/)
+## 理解
+计算思路：  
+1. 确认目标值x的长度（利用累加法，判断n的长度落在哪个长度区间）  
+2. 确认当前长度的初始值
+3. 确定目标值x和当前长度初始值的偏移量
+4. 求解n对应目标值x的元素的下标，获取并返回
+
+时间复杂度为log(n)，空间复杂度为O(1)
+
+### 代码
+```java
+public class LeetCode_400_1_第N位数字 {
+    public static int findNthDigit(int n) {
+        // i代表数字长度
+        int i = 1;
+        // sum用来统计小于n的长度的数字总个数
+        long sum = 0;
+        for (; i <= 9; i++) {
+            // 计算每个len的数字的个数
+            long count = (long)(i * 9 * Math.pow(10, i - 1));
+            if (sum + count >= n) {
+                break;
+            }
+            sum += count;
+        }
+
+        // 计算i长度的数字的起始值
+        long start = (long)Math.pow(10, i - 1);
+
+        // 计算目标数字在start上的增量
+        // 本身计算时应该使用(n - sum - i) / i，如果能整除，则增量就是当前值，不能整除，增量就是结果+1
+//        long add = (n - sum - i) % i == 0 ? (n - sum - i) / i : (n - sum - i) / i + 1;
+        long add = (n - sum - 1) / i;
+        long x = start + add;
+
+        // 因为字符坐标是从0排序的，所以需要多减一个1
+        return String.valueOf(x).charAt((int)(n - sum - 1) % i) - '0';
+    }
+
+    public static void main(String[] args) {
+        System.out.println(findNthDigit(9));
+    }
+}
+```
