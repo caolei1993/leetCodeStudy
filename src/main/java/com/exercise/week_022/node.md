@@ -317,3 +317,249 @@ public class LeetCode_149_2_直线上最多的点数 {
     }
 }
 ```
+# [LeetCode_127_1_单词接龙](https://leetcode-cn.com/problems/word-ladder/)
+## 题目
+字典 wordList 中从单词 beginWord 和 endWord 的 转换序列 是一个按下述规格形成的序列：
+
+* 序列中第一个单词是 beginWord 。
+* 序列中最后一个单词是 endWord 。
+* 每次转换只能改变一个字母。
+* 转换过程中的中间单词必须是字典 wordList 中的单词。  
+
+给你两个单词 beginWord 和 endWord 和一个字典 wordList ，找到从 beginWord 到 endWord 的 最短转换序列 中的 单词数目 。如果不存在这样的转换序列，返回 0。
+
+ 
+示例 1：
+```
+
+```
+输入：beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+输出：5
+解释：一个最短转换序列是 "hit" -> "hot" -> "dot" -> "dog" -> "cog", 返回它的长度 5。
+示例 2：
+```
+
+```
+输入：beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+输出：0
+解释：endWord "cog" 不在字典中，所以无法进行转换。
+ 
+
+提示：
+
+* 1 <= beginWord.length <= 10
+* endWord.length == beginWord.length
+* 1 <= wordList.length <= 5000
+* wordList[i].length == beginWord.length
+* beginWord、endWord 和 wordList[i] 由小写英文字母组成
+* beginWord != endWord
+* wordList 中的所有字符串 互不相同
+
+## 理解
+利用bfs解决，普通bfs有搜索空间爆炸问题，使用双向bfs来减小数据空间宽度。
+* 创建两个队列分别用于两个方向的搜索
+* 创建两个哈希表，用来过滤重复方案和记录转化次数（通过多少步转化而来）
+* 为了尽可能的让两个搜索方向平均，每次从队列取值扩展时，从队列容量较小的操作
+* 如果在搜索过程中搜索到对方的哈希表中存在的节点，说明找到了最短路径。
+
+需要注意返回的是单词总数包含首尾，所以需要给转化结果+1，无法转化按要求返回0。  
+
+
+### 代码
+```java
+public class LeetCode_127_1_单词接龙 {
+    String b;
+    String e;
+    Set<String> set = new HashSet<>();
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        b = beginWord;
+        e = endWord;
+        set.addAll(wordList);
+        if (!set.contains(endWord)) {
+            return 0;
+        }
+        int t = dfs();
+        return t == -1 ? 0 : t + 1;
+    }
+
+    private int dfs() {
+        Deque<String> d1 = new ArrayDeque<>(), d2 = new ArrayDeque<>();
+
+        Map<String, Integer> m1 = new HashMap<>(), m2 = new HashMap<>();
+        m1.put(b, 0);
+        m2.put(e, 0);
+        d1.add(b);
+        d2.add(e);
+        while (!d1.isEmpty() && !d2.isEmpty()) {
+            int t = -1;
+            if (d1.size() <= d2.size()) {
+                t = update(d1, m1, m2);
+            } else {
+                t = update(d2, m2, m1);
+            }
+            if (t != -1) {
+                return t;
+            }
+        }
+        return -1;
+    }
+
+    private int update(Deque<String> deque, Map<String, Integer> source, Map<String, Integer> other) {
+        String v = deque.poll();
+        int n = v.length();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 26; j++) {
+                String s = v.substring(0, i) + (char)('a' + j) + v.substring(i + 1, n);
+                if (set.contains(s)) {
+                    if (source.containsKey(s)) {
+                        continue;
+                    }
+                    if (other.containsKey(s)) {
+                        return source.get(v) + 1 + other.get(s);
+                    }
+                    deque.add(s);
+                    source.put(s, source.get(v) + 1);
+                }
+            }
+        }
+        return -1;
+    }
+}
+```
+
+# [LeetCode_752_1_打开转盘锁](https://leetcode-cn.com/problems/open-the-lock/)
+## 题目
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。每个拨轮可以自由旋转：例如把 '9' 变为 '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+
+列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 target 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 -1 。
+
+示例 1:
+```
+输入：deadends = ["0201","0101","0102","1212","2002"], target = "0202"
+输出：6
+解释：
+可能的移动序列为 "0000" -> "1000" -> "1100" -> "1200" -> "1201" -> "1202" -> "0202"。
+注意 "0000" -> "0001" -> "0002" -> "0102" -> "0202" 这样的序列是不能解锁的，
+因为当拨动到 "0102" 时这个锁就会被锁定。
+```
+
+示例 2:
+```
+输入: deadends = ["8888"], target = "0009"
+输出：1
+解释：
+把最后一位反向旋转一次即可 "0000" -> "0009"。
+```
+
+示例 3:
+```
+输入: deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"
+输出：-1
+解释：
+无法旋转到目标数字且不被锁定。
+```
+
+示例 4:
+```
+输入: deadends = ["0000"], target = "8888"
+输出：-1
+```
+
+提示：
+
+* 1 <= deadends.length <= 500
+* deadends[i].length == 4
+* target.length == 4
+* target 不在 deadends 之中
+* target 和 deadends[i] 仅由若干位数字组成
+
+## 理解
+利用bfs解决，普通bfs有搜索空间爆炸问题，使用双向bfs来减小数据空间宽度。
+* 创建两个队列分别用于两个方向的搜索
+* 创建两个哈希表，用来过滤重复方案和记录转化次数（通过多少步转化而来）
+* 为了尽可能的让两个搜索方向平均，每次从队列取值扩展时，从队列容量较小的操作
+* 如果在搜索过程中搜索到对方的哈希表中存在的节点，说明找到了最短路径。
+
+需要注意转盘每个位置转动都可以+1或者-1，所以里层遍历是从-1到1，需要跳过0，并且
+转盘从9，+1到0，0-1即-1是9，需要单独处理。 
+
+### 代码
+```java
+public class LeetCode_752_1_打开转盘锁 {
+    String s, t;
+    Set<String> set = new HashSet<>();
+    public int openLock(String[] deadends, String target) {
+        s = "0000";
+        t = target;
+        set.addAll(Arrays.asList(deadends));
+        if (s.equals(t)) {
+            return 0;
+        }
+        if (set.contains(s)) {
+            return -1;
+        }
+        return dfs();
+    }
+
+    private int dfs() {
+        int a = -1;
+        Deque<String> d1 = new ArrayDeque<>(), d2 = new ArrayDeque<>();
+        Map<String, Integer> m1 = new HashMap<>(), m2 = new HashMap<>();
+        d1.add(s);
+        d2.add(t);
+        m1.put(s, 0);
+        m2.put(t, 0);
+        while (!d1.isEmpty() && !d2.isEmpty()) {
+            if (d1.size() <= d2.size()) {
+                a = update(d1, m1, m2);
+            } else {
+                a = update(d2, m2, m1);
+            }
+            if (a != -1) {
+                return a;
+            }
+        }
+        return -1;
+    }
+
+    private int update(Deque<String> deque, Map<String, Integer> source, Map<String, Integer> other) {
+        String v = deque.poll();
+        // 转盘4位
+        for (int i = 0; i < 4; i++) {
+            // 每一位都可以+1或者-1
+            for (int j = -1; j <= 1; j++) {
+                if (j == 0) {
+                    continue;
+                }
+
+                int origin = v.charAt(i) - '0';
+                int next = (origin + j) % 10;
+                if (next == -1) {
+                    next = 9;
+                }
+                // 拼接经过一次转动的转盘数据
+                String newS = v.substring(0, i) + next + v.substring(i + 1);
+                // 如果存在于卡死集合中，跳过
+                if (set.contains(newS)) {
+                    continue;
+                }
+                // 如果存在于原map中，代表已经转到过，跳过
+                if (source.containsKey(newS)) {
+                    continue;
+                }
+                // 如果存在于other中，代表找到了最短路径
+                if (other.containsKey(newS)) {
+                    return source.get(v) + 1 + other.get(newS);
+                }
+                source.put(newS, source.get(v) + 1);
+                deque.add(newS);
+            }
+        }
+        return -1;
+    }
+}
+```
