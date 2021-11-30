@@ -431,3 +431,144 @@ public class LeetCode_171_1_Excel表列序号 {
     }
 }
 ```
+
+# [LeetCode_1337_1_矩阵中战斗力最弱的k行](https://leetcode-cn.com/problems/the-k-weakest-rows-in-a-matrix/)
+## 题目
+给你一个大小为 m * n 的矩阵 mat，矩阵由若干军人和平民组成，分别用 1 和 0 表示。
+
+请你返回矩阵中战斗力最弱的 k 行的索引，按从最弱到最强排序。
+
+如果第 i 行的军人数量少于第 j 行，或者两行军人数量相同但 i 小于 j，那么我们认为第 i 行的战斗力比第 j 行弱。
+
+军人 总是 排在一行中的靠前位置，也就是说 1 总是出现在 0 之前。
+
+ 
+示例 1：
+```
+输入：mat = 
+[[1,1,0,0,0],
+ [1,1,1,1,0],
+ [1,0,0,0,0],
+ [1,1,0,0,0],
+ [1,1,1,1,1]], 
+k = 3
+输出：[2,0,3]
+解释：
+每行中的军人数目：
+行 0 -> 2 
+行 1 -> 4 
+行 2 -> 1 
+行 3 -> 2 
+行 4 -> 5 
+从最弱到最强对这些行排序后得到 [2,0,3,1,4]
+```
+
+示例 2：
+```
+输入：mat = 
+[[1,0,0,0],
+ [1,1,1,1],
+ [1,0,0,0],
+ [1,0,0,0]], 
+k = 2
+输出：[0,2]
+解释： 
+每行中的军人数目：
+行 0 -> 1 
+行 1 -> 4 
+行 2 -> 1 
+行 3 -> 1 
+从最弱到最强对这些行排序后得到 [0,2,3,1]
+```
+
+提示：
+
+* m == mat.length
+* n == mat[i].length
+* 2 <= n, m <= 100
+* 1 <= k <= m
+* matrix[i][j] 不是 0 就是 1
+
+## 理解
+解法一：对矩阵中每行数据进行统计，统计的结果存入一个二维数组中，再根据题意对数组进行相应的排序，
+最后取出前k个结果的坐标值返回。  
+时间复杂度：遍历统计为O(m*n)，排序为O(mlogm)，构造答案为O(k)，最终为O(max(m*n, mlogm))  
+空间复杂度：O(m)的空间用来存储统计的战斗力，排序需要O(logm)空间，整体为O(m + logm)  
+
+解法二：二分+优先队列  
+因为每行队伍军人都站在前面，我们可以利用二分法求解每行军人的个数，再利用优先队列对结果进行排序，
+最后获取优先队列中前k个值返回。  
+
+## 解法一
+### 代码
+```java
+public class LeetCode_1337_1_矩阵中战斗力最弱的k行 {
+    public int[] kWeakestRows(int[][] mat, int k) {
+        int m = mat.length;
+        int n = mat[0].length;
+        int[][] counts = new int[m][2];
+        for (int i = 0; i < m; i++) {
+            int[] ma = mat[i];
+            int sum = 0;
+            for (int v : ma) {
+                if (v == 1) {
+                    sum++;
+                } else {
+                    break;
+                }
+            }
+            counts[i] = new int[]{sum, i};
+        }
+        Arrays.sort(counts, (a, b) -> {
+            if (a[0] == b[0]) {
+                return a[1] - b[1];
+            } else {
+                return a[0] - b[0];
+            }
+        });
+        int[] ans = new int[k];
+        for (int i = 0; i < k; i++) {
+            ans[i] = counts[i][1];
+        }
+        return ans;
+    }
+}
+```
+
+## 解法二
+### 代码
+```java
+public class LeetCode_1337_2_矩阵中战斗力最弱的k行 {
+    public int[] kWeakestRows(int[][] mat, int k) {
+        int m = mat.length;
+        int n = mat[0].length;
+        PriorityQueue<int[]> queue = new PriorityQueue<>((a, b) -> {
+            if (a[0] == b[0]) {
+                return a[1] - b[1];
+            } else {
+                return a[0] - b[0];
+            }
+        });
+        for (int i = 0; i < m; i++) {
+            int l = 0, r = n - 1;
+            while (l < r) {
+                int mid = l + r + 1 >> 1;
+                if (mat[i][mid] < 1) {
+                    r = mid - 1;
+                } else {
+                    l = mid;
+                }
+            }
+            int cur = mat[i][l] >= 1 ? r + 1 : r;
+            queue.add(new int[]{cur, i});
+        }
+        int[] ans = new int[k];
+        int index = 0;
+        while (k-- > 0) {
+            ans[index] = queue.poll()[1];
+            index++;
+        }
+        return ans;
+    }
+}
+```
