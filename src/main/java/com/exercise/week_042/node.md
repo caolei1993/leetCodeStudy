@@ -119,3 +119,68 @@ public class LeetCode_400_1_第N位数字 {
     }
 }
 ```
+
+# [LeetCode_1446_1_连续字符](https://leetcode-cn.com/problems/consecutive-characters/)
+## 理解
+双指针问题，遍历原数组，在遍历的过程中如果遇到相同的相邻元素，利用新的指针
+统计能量，每次取统计完更新能量为最大值，最终返回能量
+
+时间复杂度为O(n)  
+空间复杂度为O(1)
+
+### 代码
+```java
+public class LeetCode_1446_1_连续字符 {
+    public int maxPower(String s) {
+        int n = s.length();
+        int ans = 0;
+        for (int i = 0; i < n;) {
+            int count = 1;
+            char c = s.charAt(i);
+            while (++i < n && s.charAt(i) == c) {
+                count++;
+            }
+            ans = Math.max(ans, count);
+        }
+        return ans;
+    }
+}
+```
+
+
+
+# [LeetCode_506_1_相对名次](https://leetcode-cn.com/problems/relative-ranks/)
+## 理解
+字符串模拟题：  
+利用克隆方法获取数组克隆对象，并排序，将排序后的结果和名次存入map，再遍历
+原数组，获取相应的名次，名次小于3的做特殊的奖牌处理，大于3的名次加一返回（从
+0排的名次）。
+
+时间复杂度：克隆的复杂度是O(n)，排序的复杂度是O(nlogn)，构造哈希表的复杂
+度为O(n)，利用哈希表构造答案的复杂度为O(n)，所以整体复杂度为O(nlogn)
+
+空间复杂度为O(n)
+
+### 代码
+```java
+public class LeetCode_506_1_相对名次 {
+    String[] str = new String[]{"Gold Medal", "Silver Medal", "Bronze Medal"};
+    public String[] findRelativeRanks(int[] score) {
+        int n = score.length;
+        int[] clone = score.clone();
+        Arrays.sort(clone);
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = n - 1; i >= 0 ; i--) {
+            map.put(clone[i], n - 1 - i);
+        }
+
+        String[] ans = new String[n];
+        for (int i = 0; i < n; i++) {
+            Integer val = map.get(score[i]);
+            ans[i] = val < 3 ? str[val] : String.valueOf(val + 1);
+        }
+
+        return ans;
+    }
+}
+```
