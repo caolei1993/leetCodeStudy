@@ -184,3 +184,95 @@ public class LeetCode_506_1_相对名次 {
     }
 }
 ```
+
+# [LeetCode_1005_1_K次取反后最大化的数组和](https://leetcode-cn.com/problems/maximize-sum-of-array-after-k-negations/)
+## 理解
+利用小根堆求解：  
+使用小根堆对数组元素进行排序，每次取出最小元素取反后放回，重复操作k次，
+最后再将结果累加即可
+
+时间复杂度：遍历存入小根堆为O(nlogn)，取反操作为O(klogn)，求和为O(nlogn)，整体
+时间复杂度为O(nlogn)  
+空间复杂度为O(n)
+### 代码
+```java
+public class LeetCode_1005_1_K次取反后最大化的数组和 {
+    public int largestSumAfterKNegations(int[] nums, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (int n : nums) {
+            queue.offer(n);
+        }
+
+        while (k-- > 0) {
+            int v = queue.poll();
+            queue.offer(-v);
+        }
+        int ans = 0;
+        while (!queue.isEmpty()) {
+            ans += queue.poll();
+        }
+        return ans;
+    }
+}
+```
+
+# [LeetCode_383_1_赎金信](https://leetcode-cn.com/problems/ransom-note/)
+## 理解
+字符串模拟题：  
+统计词频比对
+
+时间复杂度为O(m+n)，空间复杂度为O(m+n+C)，m为信的长度，n为杂志的长度，C为
+常数26
+
+### 代码
+```java
+public class LeetCode_383_1_赎金信 {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        int[] cnt = new int[26];
+        for (char c : magazine.toCharArray()) {
+            cnt[c - 'a']++;
+        }
+        for (char cc : ransomNote.toCharArray()) {
+            if (--cnt[cc - 'a'] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+# [LeetCode_372_1_超级次方](https://leetcode-cn.com/problems/super-pow/)
+## 理解
+快速幂：   
+因为我们对b数组进行逐位求解幂次，所以都是10以内的幂次，也可以直接通过乘法
+遍历求解
+
+### 代码
+```java
+public class LeetCode_372_1_超级次方 {
+    int mod = 1337;
+    public int superPow(int a, int[] b) {
+        return dfs(a, b, b.length - 1);
+    }
+
+    private int dfs (int a, int[] b, int n) {
+        if (n == -1) {
+            return 1;
+        }
+        return (qpow(dfs(a, b, n - 1), 10) * qpow(a, b[n])) % mod;
+    }
+    private int qpow(int a, int b) {
+        int val = 1;
+        a %= mod;
+        while (b != 0) {
+            if ((b & 1) == 1) {
+                val = val * a % mod;
+            }
+            a = a * a % mod;
+            b >>= 1;
+        }
+        return val;
+    }
+}
+```
