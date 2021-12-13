@@ -265,7 +265,7 @@ public class LeetCode_372_1_超级次方 {
     private int qpow(int a, int b) {
         int val = 1;
         a %= mod;
-        while (b != 0) {
+        wnode.mdhile (b != 0) {
             if ((b & 1) == 1) {
                 val = val * a % mod;
             }
