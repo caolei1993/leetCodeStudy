@@ -192,3 +192,29 @@ public class LeetCode_846_1_一手顺子 {
     }
 }
 ```
+
+# [LeetCode_507_1_完美数](https://leetcode-cn.com/problems/perfect-number/)
+## 理解
+模拟题，在[1, 根号下num]范围内求解正因子，因为因子都是成对存在的，所以
+我们每次取余为0时，累加两个因子，遍历结束后与num做比较返回。
+
+时间复杂度为O(logn)  
+空间复杂度为O(1)
+
+### 代码
+```java
+public class LeetCode_507_2_完美数 {
+    public boolean checkPerfectNumber(int num) {
+        if (num == 1) {
+            return false;
+        }
+        int sum = 1;
+        for (int i = 2; i <= num / i; i++) {
+            if (num % i == 0) {
+                sum += i + num / i;
+            }
+        }
+        return num == sum;
+    }
+}
+```
