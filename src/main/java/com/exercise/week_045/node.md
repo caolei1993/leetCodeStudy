@@ -218,3 +218,71 @@ public class LeetCode_507_2_完美数 {
     }
 }
 ```
+
+# [LeetCode_2022_1_将一维数组转变为二维数组](https://leetcode-cn.com/problems/convert-1d-array-into-2d-array/)
+## 理解
+简单模拟题，依次将一维数组元素存入二维即可，在这之前判断元素总数是否
+满足二维数组存放要求。
+
+时间复杂度为O(m*n)  
+空间复杂度为O(m*n)
+
+### 代码
+```java
+public class LeetCode_2022_2_将一维数组转变为二维数组 {
+    public int[][] construct2DArray(int[] original, int m, int n) {
+        int len = original.length;
+        if (len != m * n) {
+            return new int[0][0];
+        }
+        int[][] ans = new int[m][n];
+        for (int i = 0, idx = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                ans[i][j] = original[idx++];
+            }
+        }
+        return ans;
+    }
+}
+```
+
+# [LeetCode_390_1_消除游戏](https://leetcode-cn.com/problems/elimination-game/)
+## 理解
+定义 f[i]为在 连续序列[1,i] 中进行「起始从左到右」的轮流换向间隔删除，最终左边剩余的编号；
+f'[i]为在 连续序列[1,i] 中进行「起始从右到左」的轮流换向间隔删除，最终右边剩余的编号
+
+由于从左往右，从左端点开始删除，从右往左，从右端点删除具有对称性，所以
+剩余节点也具有对称性，由此可得等式一：  
+f[i] + f'[i] = i + 1  
+
+由于我们对 f[i] 和 f'[i]的定义都是「连续序列」，因此如果我们希望使用 f[i]和 
+f'[i]得出最终答案，我们需要在每次消除后对序列进行「重新编号」，确保能够使用 
+f[i]和 f'[i]作为合法状态值，在计算出「重新编号」后的，需要将答案（编号）映射回去重新编号前的值。
+
+起始时，我们对连续序列[1,2,3,...,i] 执行了一次「从左往右」的消除之后，得到的序列为
+[2,4,6,...,x]（其中 x 根据 i 的奇偶性不同，可能为 i 或 i - 1）。新序列的长度为
+i/2
+
+考虑对得到的序列进行重新编号，使其继续保有「连续序列」的定义，即变为[1,2,3,...,i/2]，
+然后执行「从右往左」的间隔删除，最终得到 f'[i/2]，之后考虑将答案编号映射回「重新编号」前的值。
+
+f[i] = f'[i/2] * 2
+
+通过上述两个公式，我们可以将 f'[i]进行消除，得到最终的f[i] 关系式：
+
+f[i] = 2 * (i/2 + 1 - f[i/2])
+
+我们知道需要实现的函数 lastRemaining 其实就是 f[i]，
+因此该递推过程我们可以使用递归进行实现（注意的出口条件 f[1] = 1)
+
+时间复杂度为O(logn)  
+空间复杂度，忽略递归带来的额外空间开销，复杂度为O(1)
+
+### 代码
+```java
+public class LeetCode_390_1_消除游戏 {
+    public int lastRemaining(int n) {
+        return 1 == n ? 1 : 2 * (n / 2 + 1 - lastRemaining(n / 2));
+    }
+}
+```
