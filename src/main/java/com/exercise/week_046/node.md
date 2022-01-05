@@ -33,3 +33,38 @@ public class LeetCode_1185_1_一周中的第几天 {
     }
 }
 ```
+
+# [LeetCode_1576_1_替换所有的问号](https://leetcode-cn.com/problems/replace-all-s-to-avoid-consecutive-repeating-characters/)
+## 理解
+字符串模拟题，每个位置最多有两边相邻，所以我们只需要每个位置最多遍历3次，
+即可找到一个与相邻都不同的字符，依次类推，处理完字符数组，最终转化为字符
+串返回即可。
+
+时间复杂度：O(n*C)，C为常数3  
+空间复杂度：O(n)
+
+### 代码
+```java
+public class LeetCode_1576_1_替换所有的问号 {
+    public String modifyString(String s) {
+        char[] cs = s.toCharArray();
+        int n = cs.length;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 3 && cs[i] == '?'; j++) {
+                boolean flag = true;
+                if (i - 1 >= 0 && cs[i - 1] == 'a' + j) {
+                    flag = false;
+                }
+                if (i + 1 < n && cs[i + 1] == 'a' + j) {
+                    flag = false;
+                }
+                if (flag) {
+                    cs[i] = (char)('a' + j);
+                }
+            }
+        }
+        return String.valueOf(cs);
+    }
+}
+```
