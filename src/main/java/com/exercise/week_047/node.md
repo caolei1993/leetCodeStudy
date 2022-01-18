@@ -183,3 +183,81 @@ public class LeetCode_1220_1_统计元音字母序列的数目 {
     }
 }
 ```
+
+# [LeetCode_539_1_最小时间差](https://leetcode-cn.com/problems/minimum-time-difference/)
+## 理解
+对时间集合进行排序，相差最小的时间差必定出现在相邻的位置，或者是首位位置，
+依次遍历进行求解时间差值，记录最小值，最后再计算首尾的差值，取其小值返回。
+
+时间复杂度为O(nlogn)，排序的复杂度为O(nlogn)  
+空间复杂度为O(logn)，排序需要O(logn)的栈空间
+
+## 解法一
+### 代码
+```java
+public class LeetCode_539_1_最小时间差 {
+    public int findMinDifference(List<String> timePoints) {
+        Collections.sort(timePoints);
+        int preMinute = getMinute(timePoints.get(0));
+        int startMinute = preMinute;
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i < timePoints.size(); i++) {
+            int minute = getMinute(timePoints.get(i));
+            ans = Math.min(ans, minute - preMinute);
+            preMinute = minute;
+        }
+        ans = Math.min(ans, startMinute + 1440 - preMinute);
+        return ans;
+    }
+
+    private int getMinute(String time) {
+        return ((time.charAt(0) - '0') * 10 + (time.charAt(1) - '0')) * 60 + (time.charAt(3) - '0') * 10 + (time.charAt(4) - '0');
+    }
+}
+```
+## 理解
+首先使用1440，24小时总的分数可能性进行判断剪枝。
+
+再利用桶排序原理，在1440*2的空间里，进行时间分值统计，因为我们
+要考虑首尾时间差值，所以我们不但存储了时间本身，还存储了时间加上
+1440的值，一旦发现某个分值无值，直接跳过，分值统计数超过1，说明
+有时间相同的，直接返回0，否则依次求解当前值与之前值的差值，取较小
+值。
+
+时间复杂度为O(C)，C为常数1440 * 2  
+空间复杂度为O(C)
+
+## 解法二
+### 代码
+```java
+public class LeetCode_539_2_最小时间差 {
+    public int findMinDifference(List<String> timePoints) {
+        int size = timePoints.size();
+        if (size > 1440) {
+            return 0;
+        }
+        int[] cnt = new int[1440 * 2];
+        for (String timePoint : timePoints) {
+            String[] time = timePoint.split(":");
+            int h = Integer.parseInt(time[0]);
+            int m = Integer.parseInt(time[1]);
+            cnt[h * 60 + m]++;
+            cnt[h * 60 + m + 1440]++;
+        }
+        int ans = Integer.MAX_VALUE, last = -1;
+        for (int i = 0; i < 1440 * 2 && ans != 0; i++) {
+            if (cnt[i] == 0) {
+                continue;
+            }
+            if (cnt[i] > 1) {
+                return 0;
+            }
+            if (last != -1) {
+                ans = Math.min(ans, i - last);
+            }
+            last = i;
+        }
+        return ans;
+    }
+}
+```
