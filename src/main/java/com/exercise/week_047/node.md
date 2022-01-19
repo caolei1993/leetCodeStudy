@@ -261,3 +261,36 @@ public class LeetCode_539_2_最小时间差 {
     }
 }
 ```
+
+# [LeetCode_219_1_存在重复元素II](https://leetcode-cn.com/problems/contains-duplicate-ii/)
+## 理解
+滑动窗口应用题  
+
+我们转化题意为：求解在k+1的长度的窗口中是否包含相同元素，我们遍历数组
+利用set保存k+1长度的窗口数据，当长度大于k+1后，不断剔除超出窗口的元素，
+遍历过程中，如果判断set已包含当前元素，则说明有满足题意的重复元素，否则
+返回false。
+
+时间复杂度为O(n)  
+空间复杂度为O(k+1)
+
+### 代码
+```java
+public class LeetCode_219_1_存在重复元素II {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        int n = nums.length;
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            // 去除超过k+1长度窗口的值
+            if (i > k) {
+                set.remove(nums[i - k - 1]);
+            }
+            if (set.contains(nums[i])) {
+                return true;
+            }
+            set.add(nums[i]);
+        }
+        return false;
+    }
+}
+```
