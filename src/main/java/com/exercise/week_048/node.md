@@ -108,3 +108,78 @@ public class LeetCode_2000_1_反转单词前缀 {
     }
 }
 ```
+
+# [LeetCode_1219_1_黄金矿工](https://leetcode-cn.com/problems/path-with-maximum-gold/)
+## 理解
+
+## 解法一
+### 代码
+```java
+public class LeetCode_1219_1_黄金矿工 {
+    int[][] g;
+    int mm, nn;
+    int ans;
+    boolean[][] flag;
+    public int getMaximumGold(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        g = grid;
+        mm = m;
+        nn = n;
+        ans = 0;
+        flag = new boolean[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] != 0) {
+                    flag[i][j] = true;
+                    bfs(i, j, grid[i][j]);
+                    flag[i][j] = false;
+                }
+            }
+        }
+        return ans;
+    }
+
+    private void bfs(int i, int j, int val) {
+        int[][] dirs = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        ans = Math.max(ans, val);
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+            if (x < 0 || x >= mm || y < 0 || y >= nn) {
+                continue;
+            }
+            if (g[x][y] == 0 || flag[x][y]) {
+                continue;
+            }
+            flag[x][y] = true;
+            bfs(x, y, val + g[x][y]);
+            flag[x][y] = false;
+        }
+    }
+}
+```
+
+# [LeetCode_1748_1_唯一元素的和](https://leetcode-cn.com/problems/sum-of-unique-elements/)
+## 理解
+利用哈希表来统计词频，将只出现一次的数字累加返回
+
+时间复杂度为O(n)  
+空间复杂度为O(n)
+
+### 代码
+```java
+public class LeetCode_1748_1_唯一元素的和 {
+    public int sumOfUnique(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        int ans = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 1) {
+                ans += entry.getKey();
+            }
+        }
+        return ans;
+    }
+}
+```
