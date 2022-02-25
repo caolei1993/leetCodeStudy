@@ -80,6 +80,49 @@ public class LeetCode_917_1_仅仅反转字母 {
 }
 ```
 
+# [LeetCode_1706_1_球会落何处](https://leetcode-cn.com/problems/where-will-the-ball-fall/)
+## 理解
+应为数据范围比较小100，所以我们可以直接模拟，利用r和c记录球所到的位置，r代表下降高度，c代表所在列，
+不被卡主的话r会一直++，只到到底部。
+
+过程中需要判断所走的列不超过范围，且g[r][c]和g[r][c + g[r][c]]同向，不形成夹角。
+
+时间复杂度为O(m * n)  
+空间复杂度为O(n)
+
+### 代码
+```java
+public class LeetCode_1706_1_球会落何处 {
+    int m, n;
+    int[][] g;
+    public int[] findBall(int[][] grid) {
+        m = grid.length;
+        n = grid[0].length;
+        g = grid;
+        int[] ans = new int[n];
+        for (int i = 0; i < n; i++) {
+            ans[i] = getVal(i);
+        }
+        return ans;
+    }
+    private int getVal(int i) {
+        int r = 0, c = i;
+        while (r < m) {
+            int ne = c + g[r][c];
+            if (ne < 0 || ne >= n) {
+                return -1;
+            }
+            if (g[r][c] != g[r][ne]) {
+                return -1;
+            }
+            r++;
+            c = ne;
+        }
+        return c;
+    }
+}
+```
+
 # [LeetCode_537_1_复数乘法](https://leetcode-cn.com/problems/complex-number-multiplication/)
 ## 理解
 简单字符串模拟题，使用正则切割，确认实部和虚部的值，再根据复数的乘法规则  
