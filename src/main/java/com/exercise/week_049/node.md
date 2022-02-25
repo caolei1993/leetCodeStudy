@@ -79,3 +79,25 @@ public class LeetCode_917_1_仅仅反转字母 {
     }
 }
 ```
+
+# [LeetCode_537_1_复数乘法](https://leetcode-cn.com/problems/complex-number-multiplication/)
+## 理解
+简单字符串模拟题，使用正则切割，确认实部和虚部的值，再根据复数的乘法规则  
+(a + bi) * (c + di) = (ac - bd) + (ad + bc)i  
+组装结果并返回
+
+### 代码
+```java
+public class LeetCode_537_1_复数乘法 {
+    public String complexNumberMultiply(String num1, String num2) {
+        String[] s1 = num1.split("\\+|i"), s2 = num2.split("\\+|i");
+        int a = Integer.parseInt(s1[0]);
+        int b = Integer.parseInt(s1[1]);
+        int c = Integer.parseInt(s2[0]);
+        int d = Integer.parseInt(s2[1]);
+        int x = a * c - b * d;
+        int y = a * d + b * c;
+        return x + "+" + y +"i";
+    }
+}
+```
