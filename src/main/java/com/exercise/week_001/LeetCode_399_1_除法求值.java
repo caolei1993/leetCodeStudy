@@ -1,14 +1,6 @@
 package main.java.com.exercise.week_001;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
-
-import java.nio.charset.StandardCharsets;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author cl
@@ -24,8 +16,136 @@ public class LeetCode_399_1_除法求值 {
         B,
         C
     }
+
+    public static String digitSum(String s, int k) {
+        int len = s.length();
+        if (len <= k) {
+            int sum = 0;
+            for (char c : s.toCharArray()) {
+                sum += c - '0';
+            }
+            return String.valueOf(sum);
+        }
+
+        int count = len / k;
+        if (count * k < len) {
+            count++;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            int start = i * k, end = (i + 1) * k;
+            if (i == count - 1) {
+                end = len;
+            }
+            String cur = s.substring(start, end);
+            int sum = 0;
+            for (char c : cur.toCharArray()) {
+                sum += c - '0';
+            }
+            sb.append(sum);
+        }
+        return digitSum(sb.toString(), k);
+    }
+
+    public static List<String> subStr(String str) {
+        int n = str.length();
+        boolean[] vis = new boolean[n];
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            StringBuilder sb = new StringBuilder(str.charAt(i));
+            vis[i] = true;
+            dfs(str, sb, vis, set);
+        }
+        return new ArrayList<>(set);
+    }
+
+    private static void dfs(String str, StringBuilder sb, boolean[] vis, Set<String> set) {
+        for (int i = 0; i < str.length(); i++) {
+            if (vis[i]) {
+                continue;
+            }
+            sb.append(str.charAt(i));
+
+        }
+
+    }
+
+
     public static void main(String[] args) {
-        System.out.println((int)1e9);
+
+//        LocalDate now = LocalDate.of(2022,7,4);
+//        System.out.println(now);
+//        int year = now.getYear();
+//        System.out.println(year);
+//        Month month = now.getMonth();
+//        System.out.println(month);
+//        int daysOfMonth = now.lengthOfMonth();
+//        System.out.println(daysOfMonth);
+//        DayOfWeek dow = now.getDayOfWeek();
+//        System.out.println(dow);
+//        boolean leap = now.isLeapYear();
+//        System.out.println(leap);
+//        LocalTime time1 = LocalTime.of(12, 34,13);
+//        LocalTime time2 = LocalTime.of(11, 39,14);
+//        Duration duration1 = Duration.between(time1, time2);
+//        System.out.println(duration1);
+//
+//        LocalDate date1 = LocalDate.of(2011, 11, 11);
+//        LocalDate date2 = date1.withYear(2022);
+//        System.out.println(date1);
+//        System.out.println(date2);
+//        LocalDate date3 = date1.with(temporal -> temporal.plus(1, ChronoUnit.DAYS));
+//        System.out.println(date3);
+//        LocalDate date4 = date1.with(TemporalAdjusters.lastDayOfMonth());
+//        System.out.println(date4);
+//        List<Integer> list = new ArrayList<>();
+//        list.add(5);
+//        list.add(3);
+//        list.add(2);
+//        list.add(4);
+//        list.add(1);
+//        Collections.sort(list);
+//        System.out.println(Collections.binarySearch(list, 8));
+//        System.out.println(list);
+
+//        TreeMap<Integer,Integer> map = new TreeMap<>();
+//        map.put(1, 1);
+//        map.put(1, 2);
+//        System.out.println(map.get(1));
+
+//        String a = "abcd";
+//        String b = "cd";
+//        System.out.println(a.indexOf(b));
+//        SynchronousQueue<Integer> queue = new SynchronousQueue<>();
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                try {
+//                    System.out.println(Thread.currentThread().getName() + "start1");
+//                    queue.put(1);
+//                    System.out.println(Thread.currentThread().getName() + "end1");
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }.start();
+//
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                try {
+//                    System.out.println(Thread.currentThread().getName() + "start2");
+//                    Thread.sleep(10000);
+//                    queue.take();
+//                    System.out.println(Thread.currentThread().getName() + "end2");
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }.start();
 //        System.out.println(Long.parseLong("20210508110300010177000010077000"));
 //        System.out.println(5 ^ 5);
 //        System.out.println(0 ^ 5);
